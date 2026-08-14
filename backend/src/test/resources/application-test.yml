@@ -1,0 +1,31 @@
+debug: false
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:mentorai;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+mentorai:
+  cors:
+    allowed-origin: http://localhost:3000
+  security:
+    jwt:
+      secret: test-only-secret-that-is-more-than-thirty-two-bytes-long
+      expiration: PT1H
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: INFO
+    org.springframework.web: INFO

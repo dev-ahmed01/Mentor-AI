@@ -1,0 +1,26 @@
+# Secrets and local configuration
+.env
+.env.local
+.env.*.local
+
+# Java / Maven
+backend/target/
+*.class
+.mvn/timing.properties
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+*.tsbuildinfo
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
