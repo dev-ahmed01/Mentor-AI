@@ -1,4 +1,4 @@
-# Phase 1 API
+# MentorAI API
 
 Base URL: `http://localhost:8080`. Request and response bodies use JSON. Private
 routes require `Authorization: Bearer <token>`.
@@ -60,6 +60,29 @@ skills are structured objects:
 Supported remote preferences are `REMOTE`, `HYBRID`, `ON_SITE`, and `FLEXIBLE`.
 Skill proficiency, confidence, and source use the enum values defined in the API
 types. Skill names are trimmed, case-normalized for identity, and deduplicated.
+
+## Careers
+
+All career routes require authentication.
+
+- `GET /api/careers` returns the active controlled catalog in name order.
+- `GET /api/careers/{id}` returns a career reality record by UUID.
+- `GET /api/careers/by-slug/{slug}` returns the same detail by stable slug.
+- `POST /api/careers/analyze?limit=5` calculates three to ten ranked candidates
+  from the authenticated student's saved profile.
+
+The analysis response includes `calculationVersion`, configured weights,
+available evidence coverage, factor scores, explanations, strengths, prioritized
+skill gaps, risks, alternatives, uncertainties, and the next suggested action.
+`marketCompatibility` is absent and `marketEvidenceStatus` is
+`INSUFFICIENT_MARKET_EVIDENCE` until validated market observations exist. The
+number is named `Career Fit Indicator`; it is not an employment probability.
+
+Analysis without any recorded interest, preferred domain, goal, or skill returns
+`422 PROFILE_INCOMPLETE`. The optional `limit` must be between 3 and 10.
+
+The exact, versioned calculation is documented in
+[Career scoring](../career/SCORING.md).
 
 ## Error contract
 

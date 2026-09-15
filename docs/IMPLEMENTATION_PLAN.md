@@ -1,6 +1,6 @@
 # MentorAI Implementation Plan
 
-## Current repository state
+## Original bootstrap context
 
 Repository inspection on 14 August 2026 found only `CONTEXT.md` and
 `DESIGN.md`. The linked GitHub repository (`dev-ahmed01/Mentor-AI`) is empty,
@@ -31,12 +31,17 @@ data access. The frontend is a typed client and never acts as the authorization
 boundary. AI explains and interprets validated evidence; it does not create
 market facts, scores, permissions, or percentages.
 
-## Delivery phases
+## Original delivery phases (superseded)
 
-1. **Foundation and student profile** — repository scaffolding, Spring Boot,
+The sequence below records the original plan. Active delivery now follows
+[the hackathon phases](MentorAI_Hackathon_Phases_and_Codex_Prompt.md), which
+preserve the existing foundation and career features and place deterministic
+decisions, roadmaps, and adaptation before AI integration.
+
+1. **Foundation and student profile** — complete. Repository scaffolding, Spring Boot,
    PostgreSQL/Flyway, error contracts, security, JWT authentication, normalized
    profile/skills, Next.js shell, onboarding/profile UI, and tests.
-2. **Skills and career catalog** — career and career-skill schema, controlled
+2. **Skills and career catalog** — complete. Career and career-skill schema, controlled
    seed catalog, browse APIs/UI, deterministic Career Fit Indicator, gaps,
    alternatives, and scoring tests.
 3. **AI career analysis and reality check** — Spring AI/Ollama provider port,
@@ -63,7 +68,7 @@ states, and update the API and architecture documentation before the next phase.
 
 ## Dependencies
 
-- Java 21 and Maven 3.9+
+- Java 25 and Maven 3.9+
 - Spring Boot 3.5.x, Spring Web, Spring Data JPA, Spring Security, Validation,
   OAuth2 Resource Server/Jose, Actuator, and Flyway
 - PostgreSQL 17 with pgvector; H2 is test-only for fast isolated tests
@@ -144,7 +149,7 @@ evidence IDs, source, collection time, data window, and sample size.
 
 ## Immediate next step
 
-Complete Phase 1: establish the database-backed authentication/profile API and a
-usable Next.js profile flow, run backend and frontend checks, then document and
-publish the verified baseline. Career scoring and Ollama integration begin only
-after this foundation is green.
+Complete the hackathon Phase 0 baseline gate, then Phase 1 skill dependencies.
+Verify and report Phase 1 before starting Phase 2 learning priorities. The
+existing `career-fit-v1` formula and public APIs remain compatible. Do not jump
+to Spring AI/Ollama; the active hackathon plan introduces the mentor in Phase 9.

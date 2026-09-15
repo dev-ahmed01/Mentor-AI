@@ -62,6 +62,13 @@ public class GlobalExceptionHandler {
                 exception.getMessage(), Map.of(), request);
     }
 
+    @ExceptionHandler(ProfileIncompleteException.class)
+    ResponseEntity<ApiError> handleProfileIncomplete(
+            ProfileIncompleteException exception, HttpServletRequest request) {
+        return response(HttpStatus.UNPROCESSABLE_ENTITY, "PROFILE_INCOMPLETE",
+                exception.getMessage(), Map.of(), request);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     ResponseEntity<ApiError> handleDataIntegrity(HttpServletRequest request) {
         return response(HttpStatus.CONFLICT, "RESOURCE_CONFLICT",

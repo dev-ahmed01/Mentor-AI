@@ -5,14 +5,15 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: Phase 1 foundation. Authentication, normalized student
-> profiles, and the responsive profile dashboard are implemented. Career,
-> market, roadmap, and mentor features are intentionally shown as not yet
-> implemented rather than backed by fake data.
+> Current status: Phase 2 career intelligence. Authentication, normalized
+> student profiles, a controlled ten-path career catalog, deterministic career
+> comparison, skill gaps, and career-reality pages are implemented. Market,
+> roadmap, and mentor features remain explicitly unavailable rather than being
+> backed by invented evidence.
 
 ## Implemented in Phase 1
 
-- Spring Boot modular-monolith foundation on Java 21
+- Spring Boot modular-monolith foundation on Java 25
 - PostgreSQL schema managed by Flyway
 - Stateless JWT authentication with BCrypt password hashing
 - Register, login, and current-user APIs
@@ -22,6 +23,16 @@ responsible local AI. It recommends and explains; the student decides.
 - Seven-step onboarding, dashboard, and editable profile
 - Loading, error, empty, mobile, keyboard-focus, and reduced-motion states
 - Backend integration tests, frontend lint/build checks, and pinned Maven wrapper
+
+## Implemented in Phase 2
+
+- Normalized career and career-skill schema with a controlled ten-path catalog
+- Career browse and detail APIs with responsibilities, expectations, risks, and
+  explicit market-evidence boundaries
+- Versioned, deterministic `Career Fit Indicator` based on profile evidence
+- Factor explanations, strengths, prioritized gaps, alternatives, and next steps
+- Responsive career explorer, analysis results, and career-reality UI
+- Flyway migration validation and end-to-end career API/scoring tests
 
 ## Architecture
 
@@ -45,7 +56,7 @@ See [the implementation plan](docs/IMPLEMENTATION_PLAN.md),
 
 ## Prerequisites
 
-- Java 21+
+- Java 25+
 - Node.js 22+ (Node.js 24 is also supported)
 - Docker with Docker Compose, or a local PostgreSQL 17 installation
 - Git
@@ -72,7 +83,7 @@ pinned to Maven 3.9.16.
    $env:DATABASE_PASSWORD='your-local-password'
    $env:JWT_SECRET='replace-with-at-least-32-random-characters'
    cd backend
-   .\mvnw.cmd spring-boot:run
+   .\mvnw.cmd spring-boot:run '-Dspring-boot.run.jvmArguments=-Duser.timezone=UTC'
    ```
 
 4. In another shell, run the frontend:
@@ -113,8 +124,9 @@ npm audit
 ```
 
 Backend tests use an isolated H2 database in PostgreSQL compatibility mode for
-fast API/security checks. PostgreSQL migration tests will be added with
-Testcontainers as the database domain expands.
+fast API/security checks. Flyway applies and Hibernate validates both current
+migrations in the test suite; a real PostgreSQL Testcontainers suite remains a
+future hardening step.
 
 ## Environment variables
 
@@ -133,10 +145,16 @@ Testcontainers as the database domain expands.
 
 ## Roadmap
 
-The next verified phase adds the normalized career catalog and documented
-deterministic Career Fit Indicator. Spring AI/Ollama follows only after career
-and skill-gap calculations are testable without an LLM. Market data, RAG,
-roadmaps, jobs, and adaptive mentoring then build on those foundations.
+Follow [the hackathon phases and Codex prompt](docs/MentorAI_Hackathon_Phases_and_Codex_Prompt.md).
+First verify the existing baseline, then add skill dependencies, deterministic
+learning priorities, roadmaps, weekly check-ins, adaptation, and simulation.
+Market evidence and job matching follow; AI explains the established decisions
+and evidence only after those contracts are stable.
+
+On Windows, use `npm.cmd` if PowerShell blocks `npm.ps1`. The UTC JVM option
+above avoids PostgreSQL rejecting the legacy Windows `Asia/Calcutta` timezone
+alias; it changes only the backend process. If Maven selects an inaccessible
+cache, pass `-Dmaven.repo.local=<your-existing-Maven-repository>` explicitly.
 
 ## License
 

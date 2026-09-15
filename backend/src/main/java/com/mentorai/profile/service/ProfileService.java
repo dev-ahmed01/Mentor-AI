@@ -62,7 +62,12 @@ public class ProfileService {
         replace(profile.getCurrentProjects(), request.currentProjects());
         replace(profile.getCertifications(), request.certifications());
         replace(profile.getAvoidances(), request.avoidances());
-        profile.replaceSkills(toStudentSkills(profile, request.skills()));
+        List<StudentSkill> replacements = toStudentSkills(profile, request.skills());
+        // Flush orphan removals before inserting replacements for the same unique skill pair.
+        // Both operations remain in this transaction, so a later failure rolls them back together.
+        profile.replaceSkills(List.of());
+        profileRepository.flush();
+        profile.replaceSkills(replacements);
         return ProfileResponse.from(profileRepository.save(profile));
     }
 

@@ -80,7 +80,7 @@ export function OnboardingForm() {
 
       <div hidden={step !== 6} className="review-panel">
         <h2>Ready to build your starting point?</h2>
-        <p>Your answers create a student-controlled profile. Career analysis and market evidence will be added in the next verified phase; MentorAI will not invent a recommendation before those systems exist.</p>
+        <p>Your answers create an editable starting profile. You can then compare career directions using your interests, goals, skills, and weekly availability. Live market evidence is not available yet.</p>
         <ul className="check-list">
           <li>Profile details stay editable.</li>
           <li>Scores will be calculated by documented rules.</li>
