@@ -110,7 +110,35 @@ Missing/invalid UUID parameters return `400 VALIDATION_FAILED`; unknown skills
 or inactive/unknown careers return `404 RESOURCE_NOT_FOUND`. There is no public
 graph-write endpoint. A caller cannot supply another student's profile ID.
 
-## Error contract
+## Learning priorities (hackathon Phase 2)
+
+`GET /api/decisions/learning-priorities?careerId={uuid}` requires bearer
+authentication. The service uses the authenticated profile; there is no student
+ID input. It returns the active career's skills plus prerequisite foundations.
+It does not persist a target career, change the profile, or create a roadmap.
+
+The response contains `careerId`, `careerName`, `calculationVersion`, `dataLabel`,
+optional `weeklyHours`, `immediateFocusLimit`, `marketEvidenceStatus`,
+`marketWeight`, and `decisions`. `calculationVersion` is `learning-priorities-v1`,
+`dataLabel` is `DEMO DATA`, `marketEvidenceStatus` is `UNAVAILABLE`, and
+`marketWeight` is zero. There is no `marketScore`.
+
+Each decision contains `skillId`, `name`, `priority`, `deterministicScore`,
+`prerequisiteReadiness` (the existing Phase 1 contract), `careerRelevance`,
+`importance`, optional `currentProficiency`, `targetProficiency`,
+`learningDistance`, `estimatedEffortBand`, `bottleneckCount`, `reasonCodes`,
+and `evidenceStatus=MARKET_EVIDENCE_UNAVAILABLE`.
+
+Priority is LEARN_NOW, LEARN_NEXT, LEARN_LATER, or NOT_YET. Relevance is REQUIRED,
+PREFERRED, REQUIRED_FOUNDATION, or PREFERRED_FOUNDATION. Effort bands are
+FOUNDATIONS, DEVELOPING, or TARGET_MET; they are not completion-time estimates.
+See the [exact policy and reason semantics](../decision/SCORING.md).
+
+Missing/invalid careerId is `400 VALIDATION_FAILED`; unknown/inactive career is
+`404 RESOURCE_NOT_FOUND`; unauthenticated requests are 401. Empty profiles are
+valid: missing skills and time are explained rather than guessed.
+
+## Error response format
 
 ```json
 {

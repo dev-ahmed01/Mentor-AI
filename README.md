@@ -5,9 +5,9 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: Phase 2 career intelligence. Authentication, normalized
+> Current status: hackathon Phase 2 learning priorities. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
-> comparison, skill gaps, and career-reality pages are implemented. Market,
+> comparison, skill gaps, prerequisites, learning priorities, and career-reality pages are implemented. Market,
 > roadmap, and mentor features remain explicitly unavailable rather than being
 > backed by invented evidence.
 
@@ -44,6 +44,15 @@ responsible local AI. It recommends and explains; the student decides.
 See [verification progress](docs/HACKATHON_PROGRESS.md) for phase gates and
 remaining verification limitations. Hackathon phase numbers differ from the
 original foundation/career phase numbers above.
+
+## Implemented in hackathon Phase 2
+
+- Authenticated, read-only learning-priority API for an explicit target career
+- Required/preferred skill ranking, prerequisite foundations and bottlenecks
+- Learn now / Learn next / Later / Not yet with deterministic reasons
+- Weekly focus limits and explicit handling of missing availability
+- Dashboard career selector, expandable explanations and career-detail links
+- Versioned [decision policy](docs/decision/SCORING.md); no market score or AI dependency
 
 ## Architecture
 

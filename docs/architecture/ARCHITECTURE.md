@@ -81,7 +81,33 @@ explicit rather than treated as proof of preparation. Existing `career-fit-v1`
 calculations and career response contracts are unchanged. AI and learning-priority
 ranking are not part of this phase.
 
-## Decisions
+## Learning decision flow (hackathon Phase 2)
+
+```text
+Explicit career selection + authenticated profile
+  -> career requirements + batched prerequisite foundations
+  -> LearningPriorityPolicy (pure deterministic ordering and capacity gates)
+  -> learning-priorities-v1 with reasons and evidence status
+  -> dashboard Next Best Action (server-rendered GET selector and native details)
+```
+
+`LearningDecisionService` assembles inputs inside a read-only transaction.
+`LearningPriorityPolicy` owns scores and group assignment and has no database,
+network or model dependencies. `SkillDependencyService` reuses Phase 1 readiness
+for both career skills and their foundations. The public Phase 1 batch continues
+to return only career skills. No cross-user decision cache is introduced.
+
+The dashboard's target is carried in `careerId` searchParams, validated against
+the current catalog, and sent through the existing server-only bearer client.
+An invalid selection produces a selection prompt. Decision API failure keeps
+the selector/retry control available. Profile writes remain in the existing
+profile flow. Career scoring and response contracts remain unchanged.
+
+No migration or decision persistence is needed. Market weight stays zero;
+roadmap generation and AI remain later phases. The [policy](../decision/SCORING.md)
+documents the formula, tie-breaking, capacity limits and self-report thresholds.
+
+## Architecture decisions
 
 - Modular monolith over microservices keeps local development understandable.
 - Stateless bearer authentication supports a separate Next.js client while the

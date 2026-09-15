@@ -3,10 +3,12 @@ import type { Metadata } from "next";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getProfile } from "@/lib/profile";
+import { LearningPriorities } from "@/components/LearningPriorities";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ careerId?: string | string[] }> }) {
+  const { careerId } = await searchParams;
   const profile = await getProfile();
   const hasProfile = Boolean(profile.degree || profile.interests.length || profile.skills.length);
   return (
@@ -22,6 +24,8 @@ export default async function DashboardPage() {
           <Link href="/onboarding" className="button button-primary">Complete onboarding</Link>
         </div>
       ) : null}
+
+      <LearningPriorities careerId={careerId} />
 
       <div className="dashboard-grid">
         <Card className="dashboard-primary">

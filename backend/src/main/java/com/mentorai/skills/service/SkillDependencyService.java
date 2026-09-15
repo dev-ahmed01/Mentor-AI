@@ -56,11 +56,24 @@ public class SkillDependencyService {
     }
 
     public List<SkillPrerequisitesResponse> forCareer(UUID careerId, Authentication authentication) {
+        return forCareer(careerId, authentication, false);
+    }
+
+    public List<SkillPrerequisitesResponse> forCareerWithFoundations(UUID careerId, Authentication authentication) {
+        return forCareer(careerId, authentication, true);
+    }
+
+    private List<SkillPrerequisitesResponse> forCareer(UUID careerId, Authentication authentication, boolean includeFoundations) {
         var career = careers.findByIdAndActiveTrue(careerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Career was not found."));
         GraphData graph = loadGraph();
         Map<UUID, SkillProficiency> known = proficiencies(profiles.get(authentication));
-        return career.getSkills().stream().map(item -> item.getSkill())
+        Set<UUID> ids = career.getSkills().stream().map(item -> item.getSkill().getId()).collect(Collectors.toSet());
+        if (includeFoundations) {
+            Set<UUID> ancestors = ids.stream().flatMap(id -> graph.graph().prerequisites(id).stream()).collect(Collectors.toSet());
+            ids.addAll(ancestors);
+        }
+        return skills.findAllById(ids).stream()
                 .sorted(Comparator.comparing(Skill::getName))
                 .map(skill -> readiness(skill, graph, known)).toList();
     }

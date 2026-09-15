@@ -20,6 +20,7 @@ export default async function CareerDetailPage({ params }: { params: Promise<{ s
           <p className="eyebrow">Career reality · {career.dataLabel}</p>
           <h1>{career.name}</h1>
           <p>{career.description}</p>
+          <Link href={`/dashboard?careerId=${career.id}#learning-priorities`} className="button button-primary">See learning priorities</Link>
         </div>
         <Card className="reality-facts">
           <div><span>Entry difficulty</span><strong>{career.entryDifficulty.toLowerCase().replaceAll("_", " ")}</strong></div>

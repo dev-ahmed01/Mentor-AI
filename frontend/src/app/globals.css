@@ -258,3 +258,23 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }
+
+.learning-priorities { display: grid; gap: 24px; margin-bottom: 32px; scroll-margin-top: 100px; }
+.decision-selector { display: flex; align-items: end; flex-wrap: wrap; gap: 16px; margin: 24px 0; }
+.decision-selector > div { flex: 1 1 240px; min-width: 0; }
+.decision-selector label { display: block; margin-bottom: 8px; font-weight: 600; }
+.decision-selector select { width: 100%; }
+.learning-priority-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: start; }
+.learning-decision-list { list-style: none; padding: 0; margin: 0; }
+.learning-decision { padding: 20px 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+.learning-decision h4 { margin: 0; font-size: 1.05rem; }
+.learning-decision .card-heading { flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.decision-record, .decision-count { font-size: .875rem; color: var(--muted); }
+.decision-why { margin-top: 12px; font-size: .9rem; }
+.decision-why summary { cursor: pointer; font-weight: 600; }
+.decision-why li { margin-bottom: 6px; }
+.decision-evidence { border-left: 3px solid var(--line); padding-left: 14px; }
+@media (max-width: 700px) {
+  .learning-priority-grid { grid-template-columns: 1fr; }
+  .decision-selector .button { width: 100%; white-space: normal; }
+}

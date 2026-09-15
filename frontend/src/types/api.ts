@@ -149,3 +149,33 @@ export type SkillPrerequisites = {
     satisfied: boolean;
   }>;
 };
+
+export type LearningPriority = "LEARN_NOW" | "LEARN_NEXT" | "LEARN_LATER" | "NOT_YET";
+export type LearningDecision = {
+  skillId: string;
+  name: string;
+  priority: LearningPriority;
+  deterministicScore: number;
+  prerequisiteReadiness: SkillPrerequisites;
+  careerRelevance: "REQUIRED" | "PREFERRED" | "REQUIRED_FOUNDATION" | "PREFERRED_FOUNDATION";
+  importance: number;
+  currentProficiency?: ProfileSkill["proficiency"];
+  targetProficiency: ProfileSkill["proficiency"];
+  learningDistance: number;
+  estimatedEffortBand: "FOUNDATIONS" | "DEVELOPING" | "TARGET_MET";
+  bottleneckCount: number;
+  reasonCodes: string[];
+  evidenceStatus: "MARKET_EVIDENCE_UNAVAILABLE";
+};
+
+export type LearningPrioritiesResponse = {
+  careerId: string;
+  careerName: string;
+  calculationVersion: string;
+  dataLabel: string;
+  weeklyHours?: number;
+  immediateFocusLimit: number;
+  marketEvidenceStatus: "UNAVAILABLE";
+  marketWeight: number;
+  decisions: LearningDecision[];
+};
