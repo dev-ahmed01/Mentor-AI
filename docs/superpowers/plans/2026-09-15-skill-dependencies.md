@@ -30,9 +30,10 @@ Next.js 16, React, TypeScript. No additional application dependencies.
 
 ## Task 1: Preserve and verify baseline
 
-- [ ] Run current Java 25 tests, frontend lint/build, PostgreSQL migration check.
-- [ ] Browser-check profile editing, sign-in, careers and the console after fixes.
-- [ ] Record results and commit the existing baseline, including the approved
+- [x] Run current Java 25 tests, frontend lint/build, PostgreSQL migration check.
+- [x] Browser-check profile editing, sign-in, careers and the console after fixes
+  (Chrome reconnected; final browser pass used isolated H2 and production frontend).
+- [x] Record results and commit the existing baseline, including the approved
   profile-save fix and preserved career implementation.
 
 ## Task 2: Dependency domain and authenticated API
@@ -62,12 +63,12 @@ GET /api/skills/{id}/prerequisites      transitive personal readiness
 GET /api/skills/prerequisites?careerId=...  batched career skill readiness
 ```
 
-- [ ] Add integration tests first: retrieval, authentication, unknown IDs,
+- [x] Add integration tests first: retrieval, authentication, unknown IDs,
   beginner vs awareness vs absent skills, per-user isolation, unique/self edges.
-- [ ] Run tests and observe failure before implementing the endpoints.
-- [ ] Add graph unit tests for chains, shared ancestors, cycles and self-edges.
-- [ ] Implement the smallest domain/API changes, then run all backend tests.
-- [ ] Apply V3 on existing V2 PostgreSQL and validate clean V1–V3 migration.
+- [x] Run tests and observe failure before implementing the endpoints.
+- [x] Add graph unit tests for chains, shared ancestors, cycles and self-edges.
+- [x] Implement the smallest domain/API changes, then run all backend tests.
+- [x] Apply V3 on existing V2 PostgreSQL and validate clean V1–V3 migration.
 
 ## Task 3: Career prerequisite context and verification
 
@@ -77,8 +78,9 @@ batch from the existing server-only API client. Show required foundations,
 recorded/missing state and the self-report/DEMO DATA boundary using semantic
 details and text; retain existing route loading/error behavior.
 
-- [ ] Run lint and production build.
-- [ ] Browser-check missing and satisfied prerequisites and console warnings.
-- [ ] Update API/database/architecture docs and `docs/HACKATHON_PROGRESS.md`.
-- [ ] Run full backend suite and `git diff --check`; review changed files.
-- [ ] Commit and report Phase 1 verification before starting Phase 2.
+- [x] Run lint and production build.
+- [x] Browser-check missing and satisfied prerequisites and console warnings
+  (also checked desktop/mobile layout and keyboard disclosure control).
+- [x] Update API/database/architecture docs and `docs/HACKATHON_PROGRESS.md`.
+- [x] Run full backend suite and `git diff --check`; review changed files.
+- [x] Commit and report Phase 1 verification before starting Phase 2.

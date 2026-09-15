@@ -84,6 +84,32 @@ Analysis without any recorded interest, preferred domain, goal, or skill returns
 The exact, versioned calculation is documented in
 [Career scoring](../career/SCORING.md).
 
+## Skill prerequisites (hackathon Phase 1)
+
+All endpoints require authentication:
+
+- `GET /api/skills/{id}/dependencies` returns direct prerequisite edges with
+  target/prerequisite IDs, prerequisite name, importance (1–5), and `DEMO DATA`.
+- `GET /api/skills/{id}/prerequisites` returns the authenticated student's
+  readiness against all direct and transitive prerequisites.
+- `GET /api/skills/prerequisites?careerId={uuid}` returns readiness for all skills
+  of an active career in one request. It does not select a career or change data.
+
+Readiness returns `skillId`, `name`, `eligible`, `coverage`, `minimumProficiency`,
+`calculationVersion`, `dataLabel`, and `prerequisites`. Each prerequisite includes
+`skillId`, `name`, `direct`, optional `currentProficiency`, and `satisfied`.
+
+`skill-prerequisites-v1` requires every modeled ancestor at `BEGINNER` or higher.
+`AWARENESS` and absent skills are insufficient. This is recorded preparation,
+not assessed competence. `NO_RECORDED_PREREQUISITES` returns an empty list and
+`eligible=true` meaning only that this starter graph imposes no restriction.
+`MODELED_PREREQUISITES` means at least one prerequisite is recorded. Graph data
+is illustrative `DEMO DATA`; no market claim or career score is calculated here.
+
+Missing/invalid UUID parameters return `400 VALIDATION_FAILED`; unknown skills
+or inactive/unknown careers return `404 RESOURCE_NOT_FOUND`. There is no public
+graph-write endpoint. A caller cannot supply another student's profile ID.
+
 ## Error contract
 
 ```json

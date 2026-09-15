@@ -34,6 +34,17 @@ responsible local AI. It recommends and explains; the student decides.
 - Responsive career explorer, analysis results, and career-reality UI
 - Flyway migration validation and end-to-end career API/scoring tests
 
+## Implemented in hackathon Phase 1
+
+- Reusable skill prerequisite graph and additive V3 migration
+- Cycle/duplicate/self-edge safeguards and authenticated readiness APIs
+- Deterministic direct/transitive prerequisite checks using recorded proficiency
+- Expandable prerequisite context on career detail pages, labeled `DEMO DATA`
+
+See [verification progress](docs/HACKATHON_PROGRESS.md) for phase gates and
+remaining verification limitations. Hackathon phase numbers differ from the
+original foundation/career phase numbers above.
+
 ## Architecture
 
 ```text
@@ -124,7 +135,7 @@ npm audit
 ```
 
 Backend tests use an isolated H2 database in PostgreSQL compatibility mode for
-fast API/security checks. Flyway applies and Hibernate validates both current
+fast API/security checks. Flyway applies and Hibernate validates all current
 migrations in the test suite; a real PostgreSQL Testcontainers suite remains a
 future hardening step.
 

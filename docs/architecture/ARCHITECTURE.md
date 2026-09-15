@@ -59,6 +59,28 @@ the numerator and normalization because no validated observations exist. Future
 market or AI modules must cross explicit service boundaries and cannot silently
 change `career-fit-v1` results.
 
+## Skill dependency flow (hackathon Phase 1)
+
+```text
+Shared skills + illustrative prerequisite edges
+  -> startup DAG validation
+  -> direct/transitive prerequisite retrieval
+  -> authenticated profile proficiency comparison
+  -> career skill context (native expandable details)
+```
+
+`SkillDependencyGraph` performs cycle detection and deduplicated ancestor
+traversal without database, profile, model, or network dependencies.
+`SkillDependencyService` loads a small graph once per request, resolves the
+authenticated profile through the existing service, and emits typed responses.
+The career batch avoids one frontend request per displayed skill. No graph or
+readiness result is stored in a cross-user cache.
+
+All required ancestors must be recorded at BEGINNER or above. Absent coverage is
+explicit rather than treated as proof of preparation. Existing `career-fit-v1`
+calculations and career response contracts are unchanged. AI and learning-priority
+ranking are not part of this phase.
+
 ## Decisions
 
 - Modular monolith over microservices keeps local development understandable.

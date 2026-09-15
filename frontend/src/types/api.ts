@@ -132,3 +132,20 @@ export type CareerAnalysis = {
   profileLimitations: string[];
   candidates: CareerCandidate[];
 };
+
+export type SkillPrerequisites = {
+  skillId: string;
+  name: string;
+  eligible: boolean;
+  coverage: "NO_RECORDED_PREREQUISITES" | "MODELED_PREREQUISITES";
+  minimumProficiency: ProfileSkill["proficiency"];
+  calculationVersion: string;
+  dataLabel: string;
+  prerequisites: Array<{
+    skillId: string;
+    name: string;
+    direct: boolean;
+    currentProficiency?: ProfileSkill["proficiency"];
+    satisfied: boolean;
+  }>;
+};

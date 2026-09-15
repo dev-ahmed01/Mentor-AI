@@ -188,6 +188,10 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 .career-skill-list > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 0; border-top: 1px solid var(--line); }
 .career-skill-list > div > div { display: grid; }
 .career-skill-list span { color: var(--muted); font-size: 0.78rem; }
+.skill-prerequisites { margin-top: 8px; font-size: 0.82rem; }
+.skill-prerequisites summary { cursor: pointer; color: var(--brand-dark); }
+.skill-prerequisites ul { margin: 8px 0; }
+.career-skill-list small { color: var(--muted); font-size: 0.78rem; }
 .market-boundary { margin-top: 24px; border: 1px dashed #b8c5bb; border-radius: 20px; padding: clamp(24px, 5vw, 38px); }
 .market-boundary > p:not(.eyebrow), .market-boundary li { color: var(--muted); }
 .market-boundary ul { padding-left: 20px; }

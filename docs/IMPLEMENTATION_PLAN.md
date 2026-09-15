@@ -149,7 +149,8 @@ evidence IDs, source, collection time, data window, and sample size.
 
 ## Immediate next step
 
-Complete the hackathon Phase 0 baseline gate, then Phase 1 skill dependencies.
-Verify and report Phase 1 before starting Phase 2 learning priorities. The
+The hackathon Phase 0 baseline is checkpointed and Phase 1 skill dependencies
+are implemented and verified. See [verification results](HACKATHON_PROGRESS.md).
+The next hackathon phase is Phase 2 learning priorities. The
 existing `career-fit-v1` formula and public APIs remain compatible. Do not jump
 to Spring AI/Ollama; the active hackathon plan introduces the mentor in Phase 9.

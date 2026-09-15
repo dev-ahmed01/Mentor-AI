@@ -38,6 +38,24 @@ The migration seeds ten reference paths and the shared skills they need. Every
 career is marked `demo_data=true`; its market considerations are research
 questions and are never interpreted as current demand, salary, or hiring proof.
 
+## Hackathon Phase 1 schema
+
+`V3__skill_dependencies.sql` adds `skill_dependencies`, linking a target skill
+to a prerequisite with importance from 1 to 5. All modeled prerequisites are
+required; importance does not make an edge optional. Foreign keys, unique pairs,
+a non-self constraint and an importance check protect the data. The unique-pair
+index supports target lookup; a reverse index supports prerequisite lookup.
+
+The migration adds three foundations only when their normalized names do not
+already exist, then resolves all seeded edges by normalized name. Existing
+student-created skills remain canonical, including their original UUIDs.
+
+Thirteen illustrative edges cover Spring, relational database integration, web
+UI and data/ML foundations. They are `DEMO DATA`, not a complete curriculum or
+market evidence. The application validates acyclicity at startup and on graph
+reads. Future write operations must validate the entire proposed graph before
+committing; SQL constraints alone do not detect multi-edge cycles.
+
 ## Planned schema growth
 
 Later migrations add market observations/snapshots with provenance and freshness;
