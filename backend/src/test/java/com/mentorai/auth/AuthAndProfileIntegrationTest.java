@@ -91,6 +91,33 @@ class AuthAndProfileIntegrationTest {
     }
 
     @Test
+    void editingAnExistingProfileRetainsSkillsWithoutDuplicateRows() throws Exception {
+        String token = register("Editing Student", "editing@example.com");
+        String profile = """
+                {"timeAvailablePerWeek":8,"skills":[
+                  {"name":"Java","category":"Programming language","proficiency":"INTERMEDIATE","confidence":"HIGH","source":"PROJECT"},
+                  {"name":"SQL","category":"Data","proficiency":"BEGINNER","confidence":"MEDIUM","source":"SELF_REPORTED"}
+                ]}
+                """;
+        mockMvc.perform(put("/api/profile").header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON).content(profile))
+                .andExpect(status().isOk());
+        mockMvc.perform(put("/api/profile").header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON).content(profile.replace(":8", ":6")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.timeAvailablePerWeek", is(6)))
+                .andExpect(jsonPath("$.skills", hasSize(2)));
+        mockMvc.perform(get("/api/profile").header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.timeAvailablePerWeek", is(6)))
+                .andExpect(jsonPath("$.skills", hasSize(2)));
+        mockMvc.perform(put("/api/profile").header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"skills\":[]}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.skills", hasSize(0)));
+    }
+
+    @Test
     void profilesAreIsolatedByAuthenticatedUser() throws Exception {
         String first = register("First", "first@example.com");
         String second = register("Second", "second@example.com");
