@@ -179,3 +179,40 @@ export type LearningPrioritiesResponse = {
   marketWeight: number;
   decisions: LearningDecision[];
 };
+
+export type RoadmapTaskState = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "SKIPPED" | "NEEDS_REVIEW";
+export type RoadmapTask = {
+  id: string;
+  skillId: string;
+  skillName: string;
+  title: string;
+  state: RoadmapTaskState;
+  targetProficiency: ProfileSkill["proficiency"];
+  estimatedHours: number;
+  satisfiedAtGeneration: boolean;
+  ready: boolean;
+  initialPriority: LearningPriority;
+  priorityPoints: number;
+  orderingReason: string;
+  prerequisites: Array<{ taskId: string; skillName: string; satisfiedAtGeneration: boolean; satisfied: boolean }>;
+};
+export type Roadmap = {
+  id: string;
+  careerId: string;
+  careerName: string;
+  title: string;
+  revision: number;
+  generationVersion: string;
+  decisionVersion: string;
+  dataLabel: string;
+  createdAt: string;
+  updatedAt: string;
+  profileUpdatedAt: string;
+  previousRoadmapId?: string;
+  weeklyHours: number;
+  currentPhaseId?: string;
+  currentPriority: LearningPriority;
+  nextAction?: RoadmapTask;
+  thisWeek: Array<{ taskId: string; title: string; plannedHours: number }>;
+  phases: Array<{ id: string; position: number; title: string; tasks: RoadmapTask[] }>;
+};

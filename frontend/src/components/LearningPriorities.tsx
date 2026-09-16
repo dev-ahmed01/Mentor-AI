@@ -76,6 +76,7 @@ export async function LearningPriorities({ careerId }: { careerId?: string | str
         {unavailable ? <p role="status">Learning priorities are temporarily unavailable. Use “Show learning priorities” to try again.</p> : null}
         {result ? <>
           <h3>{result.careerName}</h3>
+          <Link href={`/roadmap?careerId=${result.careerId}`} className="button button-primary">Create or view roadmap</Link>
           <p>{result.weeklyHours != null ? `${result.weeklyHours} hours/week recorded · Immediate focus limit: ${result.immediateFocusLimit}.` : "Weekly time is not recorded. Add availability in your profile before choosing an immediate focus."} <Link href="/profile" className="text-link">Edit profile</Link></p>
           <p>Focus limits help avoid overload; they do not promise completion this week. Career skills use an intermediate learning target, while prerequisite-only foundations use beginner. These are illustrative self-report thresholds, not assessed competence.</p>
           <p className="decision-evidence">Market evidence unavailable. This ranking uses your profile and an illustrative skill graph; it contains no hiring or demand estimates.</p>

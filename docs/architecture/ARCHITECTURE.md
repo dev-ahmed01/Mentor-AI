@@ -8,7 +8,7 @@ system of record and will also host pgvector. Ollama is a replaceable local AI
 provider behind Spring AI service interfaces.
 
 Backend packages are organized by domain (`auth`, `profile`, `skills`, `career`,
-and later `market`, `roadmap`, `progress`, `jobs`, `mentor`, `ai`) with shared
+`decision`, `roadmap`, and later `market`, `progress`, `jobs`, `mentor`, `ai`) with shared
 configuration, errors, and security under `common`. Controllers accept DTOs,
 application services own transactions and business rules, repositories only
 handle persistence, and external providers sit behind ports.
@@ -106,6 +106,33 @@ profile flow. Career scoring and response contracts remain unchanged.
 No migration or decision persistence is needed. Market weight stays zero;
 roadmap generation and AI remain later phases. The [policy](../decision/SCORING.md)
 documents the formula, tie-breaking, capacity limits and self-report thresholds.
+
+## Roadmap flow (hackathon Phase 3)
+
+```text
+Authenticated profile + selected career + learning-priorities-v1
+  -> RoadmapGenerator (topological ordering, known-skill skipping, demo effort)
+  -> persisted Roadmap / RoadmapPhase / RoadmapTask aggregate
+  -> derived current stage, next action and bounded weekly focus
+  -> server-rendered roadmap with title/task Server Actions
+```
+
+Generation creates an explicit snapshot with policy versions, profile timestamp
+and saved weekly hours. Subsequent profile changes do not rewrite it. New plans
+preserve old IDs and link to the previous plan. The current plan is the latest
+created, not the most recently edited. Completion never updates profile skills.
+
+`RoadmapService` owns transactions and resolves each resource by ID and caller.
+Updates validate all proposed task states before mutation. Prerequisites use
+saved profile evidence or completed tasks; skipping an unknown foundation does
+not unlock it. Parent optimistic locking covers child edits and returns a safe
+409 on stale saves. Concurrent failed transactions roll back all edits.
+
+The `/roadmap` page exposes empty/loading/error states, current and older plans,
+native stage disclosures and controlled editors that retain input on errors.
+Editor identity includes the roadmap/task ID and revision to reset local state
+when navigating between saved plans. This week is a capacity suggestion, not a
+dated progress ledger. See [generation policy](../roadmap/GENERATION.md).
 
 ## Architecture decisions
 

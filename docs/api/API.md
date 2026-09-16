@@ -138,6 +138,54 @@ Missing/invalid careerId is `400 VALIDATION_FAILED`; unknown/inactive career is
 `404 RESOURCE_NOT_FOUND`; unauthenticated requests are 401. Empty profiles are
 valid: missing skills and time are explained rather than guessed.
 
+## Roadmaps (hackathon Phase 3)
+
+All routes require bearer authentication and use the authenticated owner. There
+is no owner/profile ID input. Unknown or another user's roadmap returns
+`404 RESOURCE_NOT_FOUND`.
+
+- `POST /api/roadmaps` accepts `{ "careerId": "<active-career-uuid>" }` and
+  returns 201, a Location header and the saved roadmap. Missing weekly
+  availability returns `422 PROFILE_INCOMPLETE`. Every call creates a new plan.
+- `GET /api/roadmaps/current` returns the latest created plan, or 404 if absent.
+- `GET /api/roadmaps/{id}` retrieves a current or older owned plan.
+- `PUT /api/roadmaps/{id}` atomically updates optional title and/or task edits,
+  returning 200 with the updated roadmap. Example:
+
+```json
+{
+  "expectedRevision": 0,
+  "title": "My backend learning plan",
+  "tasks": [{
+    "id": "<task-uuid-from-this-roadmap>",
+    "title": "Practice Java foundations",
+    "estimatedHours": 6,
+    "state": "COMPLETED"
+  }]
+}
+```
+
+`expectedRevision` is required and nonnegative. Each supplied task edit requires
+all four fields; a request can edit at most 100 distinct tasks. Nonblank titles
+are limited to 200 characters. Effort is an integer from 0 to 168; unfinished
+tasks require positive hours. There is no delete, reordering or skill-change API.
+
+The response contains `id`, `careerId`, `careerName`, `title`, `revision`,
+`generationVersion`, `decisionVersion`, `dataLabel`, audit/profile timestamps,
+`previousRoadmapId`, `weeklyHours`, `currentPhaseId`, `currentPriority`,
+`nextAction`, `thisWeek` and ordered `phases`. A phase has `id`, `position`,
+`title` and `tasks`. Tasks include skill identity/name, title/state/target/effort,
+`satisfiedAtGeneration`, `ready`, initial priority, points, ordering reason and
+prerequisite records. Weekly entries contain `taskId`, `title`, `plannedHours`.
+`nextAction` is a task or null; `currentPhaseId` is null when no work is unfinished.
+
+Malformed bodies, invalid fields and duplicate/foreign task IDs return
+`400 VALIDATION_FAILED`. Stale revisions, prohibited transitions and unmet
+prerequisites return `409 RESOURCE_CONFLICT`, with no partial writes. Completed tasks can
+reopen as NEEDS_REVIEW. Skipping unknown foundations does not unlock dependents.
+See [generation/state policy](../roadmap/GENERATION.md) for all transitions and
+capacity rules. Completion does not update profile proficiency.
+
 ## Error response format
 
 ```json

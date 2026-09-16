@@ -51,10 +51,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </Card>
 
         <Card className="roadmap-preview">
-          <div className="card-heading"><span>Product status</span><Badge>Next phase</Badge></div>
-          <h3>No roadmap has been generated</h3>
-          <p>Personalized roadmaps will follow skill prerequisites and learning priorities. For now, explore career expectations and review your skill gaps.</p>
-          <div className="empty-state">Roadmap generation is not available yet</div>
+          <div className="card-heading"><span>Your learning path</span><Badge>Roadmaps available</Badge></div>
+          <h3>Turn priorities into a plan</h3>
+          <p>Create an ordered roadmap, adjust task effort, and record progress at a pace that fits your available time.</p>
+          <Link href="/roadmap" className="text-link">Open or create your roadmap</Link>
         </Card>
       </div>
     </div>

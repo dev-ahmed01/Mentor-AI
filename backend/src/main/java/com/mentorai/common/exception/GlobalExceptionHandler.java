@@ -9,6 +9,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import com.mentorai.roadmap.service.RoadmapValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,6 +26,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    ResponseEntity<ApiError> handleMalformedBody(HttpServletRequest request) {
+        return response(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "The request body contains invalid or missing values.", Map.of(), request);
+    }
+
+    @ExceptionHandler(RoadmapValidationException.class)
+    ResponseEntity<ApiError> handleRoadmapValidation(RoadmapValidationException exception, HttpServletRequest request) {
+        return response(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", exception.getMessage(), Map.of(), request);
+    }
+
+    @ExceptionHandler(OptimisticLockingFailureException.class)
+    ResponseEntity<ApiError> handleConcurrentChange(HttpServletRequest request) {
+        return response(HttpStatus.CONFLICT, "RESOURCE_CONFLICT", "This record changed. Refresh it before saving your edits.", Map.of(), request);
+    }
 
     @ExceptionHandler({MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class})
     ResponseEntity<ApiError> handleInvalidParameter(HttpServletRequest request) {

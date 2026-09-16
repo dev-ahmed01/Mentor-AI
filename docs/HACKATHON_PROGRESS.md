@@ -118,4 +118,49 @@ PostgreSQL V1–V3 and upgrade verification from Phase 1 remains recorded above.
 The Phase 2 suite ran on H2; it was not rerun on PostgreSQL because the earlier
 Docker test environment was unavailable. Existing migrations are unchanged.
 The previously recorded dependency-audit findings remain outside this phase.
-Phase 3 has not started.
+Phase 2 was committed as `98169ef` before starting Phase 3.
+
+## Phase 3 — personalized roadmaps (15–16 September 2026)
+
+- Added persisted user-owned roadmaps, learning stages, skill tasks and saved
+  prerequisite evidence with additive V4 migration.
+- Added deterministic generation from Phase 2 priorities, prerequisite order,
+  recorded proficiency and weekly capacity; known targets start skipped.
+- Added create/current/detail/update APIs, previous-plan links, atomic task edits,
+  prerequisite gates and optimistic revision protection, including child edits.
+- Added `/roadmap` with next action, current stage, weekly focus, later work,
+  completed work, ordering reasons, title/effort/state editors and navigation.
+- Added [generation/state policy](roadmap/GENERATION.md) and updated API,
+  database and architecture documentation. Career fit scoring remains unchanged.
+
+Verification on Java 25.0.4.1:
+
+| Check | Result |
+| --- | --- |
+| New API tests before implementation | Seven expected absent-route failures |
+| Full suite, H2 with clean V1–V4 | 34 tests, zero failures/errors |
+| Full suite, PostgreSQL 17.11 with clean V1–V4 | 34 tests, zero failures/errors |
+| PostgreSQL V3 to V4 upgrade and Hibernate validation | Passed; existing profile fields and skill UUID preserved |
+| Ownership, generation/order, known-skill skips, state transitions, atomic rollback and stale revisions | Passed |
+| Frontend lint and production build | Passed, including the review fix |
+| Chrome production frontend + PostgreSQL | Sign-in, empty state, generation, task edit, completion and reload passed |
+| Prerequisite UI | Blocked start/complete options disabled; completing Java unlocked Spring Fundamentals |
+| Two-hour weekly availability | Two-hour partial allocation, then next eligible task after completion |
+| Stale browser tab | Save rejected; typed title retained with refresh link |
+| New generation and previous-plan navigation | Both plans preserved; title editor correct between distinct plans at revision 1 |
+| Desktop and 390 x 844 mobile viewport | Readable roadmap, weekly focus and tasks; no horizontal overflow (375px content width) |
+| Keyboard | Task state selected by keyboard; explanation disclosure closes with Enter |
+| Captured browser console | No warnings/errors during verified flow |
+| Independent review | Backend had no actionable findings; fixed frontend title editor identity across plans |
+
+PostgreSQL ran from official portable binaries in an isolated temporary cluster
+on loopback port 55433, using separate clean-suite and upgrade databases. No
+production database was reset. The upgrade preserved business fields and UUIDs;
+the profile timestamp was stored at PostgreSQL microsecond precision (the initial
+write response included finer nanoseconds). Browser verification resumed on
+16 September after an account usage limit interrupted the earlier attempt.
+
+Weekly focus is a capacity suggestion, not a dated hours-worked ledger. Completion
+is self-reported and does not change profile proficiency. No Phase 4 check-ins or
+automatic adaptation were added. Previously recorded npm audit findings remain
+outside this phase. Next: Phase 4 weekly check-ins and progress tracking.

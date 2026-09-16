@@ -274,7 +274,19 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 .decision-why summary { cursor: pointer; font-weight: 600; }
 .decision-why li { margin-bottom: 6px; }
 .decision-evidence { border-left: 3px solid var(--line); padding-left: 14px; }
+.roadmap-page, .roadmap-content, .roadmap-phases { display: grid; gap: 24px; }
+.roadmap-overview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.roadmap-phase > summary { font-weight: 650; cursor: pointer; }
+.roadmap-edit { margin: 16px 0; }
+.roadmap-edit > summary { cursor: pointer; font-weight: 600; }
+.roadmap-task { padding: 24px 0; border-top: 1px solid var(--line); overflow-wrap: anywhere; scroll-margin-top: 100px; }
+.roadmap-task h4 { margin: 0; font-size: 1.1rem; }
+.roadmap-task .card-heading { align-items: start; flex-wrap: wrap; gap: 12px; }
+.roadmap-task-form { padding: 16px; border-radius: 12px; background: var(--paper); }
+.roadmap-blocker { padding-left: 12px; border-left: 3px solid var(--accent); }
+.weekly-hours { display: block; color: var(--brand); }
 @media (max-width: 700px) {
   .learning-priority-grid { grid-template-columns: 1fr; }
+  .roadmap-overview { grid-template-columns: 1fr; }
   .decision-selector .button { width: 100%; white-space: normal; }
 }

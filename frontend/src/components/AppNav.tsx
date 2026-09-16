@@ -11,6 +11,7 @@ export function AppNav({ user }: { user: User }) {
         <nav aria-label="Primary navigation">
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/careers">Careers</Link>
+          <Link href="/roadmap">Roadmap</Link>
           <Link href="/profile">Profile</Link>
         </nav>
         <div className="account-menu">
