@@ -8,7 +8,7 @@ system of record and will also host pgvector. Ollama is a replaceable local AI
 provider behind Spring AI service interfaces.
 
 Backend packages are organized by domain (`auth`, `profile`, `skills`, `career`,
-`decision`, `roadmap`, and later `market`, `progress`, `jobs`, `mentor`, `ai`) with shared
+`decision`, `roadmap`, `progress`, and later `market`, `jobs`, `mentor`, `ai`) with shared
 configuration, errors, and security under `common`. Controllers accept DTOs,
 application services own transactions and business rules, repositories only
 handle persistence, and external providers sit behind ports.
@@ -133,6 +133,32 @@ native stage disclosures and controlled editors that retain input on errors.
 Editor identity includes the roadmap/task ID and revision to reset local state
 when navigating between saved plans. This week is a capacity suggestion, not a
 dated progress ledger. See [generation policy](../roadmap/GENERATION.md).
+
+## Weekly progress flow (hackathon Phase 4)
+
+```text
+Owned roadmap + explicit Start this week
+  -> WeeklyAllocationPolicy (ready tasks + bounded capacity)
+  -> saved WeeklyPlan and task snapshots
+  -> student outcomes, actual time, next capacity and optional constraints
+  -> one transaction: validate -> explicit roadmap edits -> next plan -> check-in
+  -> current reflection, next allocation and private weekly history
+```
+
+`WeeklyProgressService` resolves the authenticated owner and enforces Monday/UTC
+periods, exact task coverage, duplicate prevention and atomic persistence.
+`RoadmapService` retains authority over transitions/prerequisites; check-ins use
+its revision protection. Constraints and capacity ratings record student context
+without inferring sensitive circumstances or changing profile proficiency.
+An injected UTC Clock makes week boundaries and late submissions testable.
+
+The `/progress` page reads current/selected week, reflection and paginated history
+through the server-only bearer client. Controlled form inputs remain after failed
+saves, and a missed-week shortcut records zero hours without shame language.
+Snapshot allocations remain separate from the roadmap's live suggested focus.
+An already saved next-week plan is preserved on late submissions; the UI shows
+both reported availability and saved capacity when they differ. Phase 5 will
+introduce broader adaptation. See [weekly policy](../progress/WEEKLY_CHECK_INS.md).
 
 ## Architecture decisions
 

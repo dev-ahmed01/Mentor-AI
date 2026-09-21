@@ -186,6 +186,73 @@ reopen as NEEDS_REVIEW. Skipping unknown foundations does not unlock dependents.
 See [generation/state policy](../roadmap/GENERATION.md) for all transitions and
 capacity rules. Completion does not update profile proficiency.
 
+## Weekly progress (hackathon Phase 4)
+
+All routes require authentication and resolve the caller's owned records. Weeks
+start Monday in UTC. GET requests do not create plans.
+
+- `POST /api/weekly-plan`, body `{ "roadmapId": "<owned-roadmap-uuid>" }`, saves
+  this week's allocation and returns 201 with a Location header and WeeklyPlan.
+  Only one plan per user/week; repeat creation returns 409.
+- `GET /api/weekly-plan/current` returns WeeklyPlan, or 404 when absent.
+- `GET /api/check-ins/current` returns the week's CheckIn, or 404 when absent.
+- Both current GET routes accept optional `weekStart=YYYY-MM-DD` for a saved
+  earlier week. Dates must be Mondays no later than the current week.
+- `GET /api/check-ins/history?page=0` returns `{items, page, hasNext}`. Each item
+  contains `plan` and optional `checkIn`; absent check-ins mean unsubmitted plans.
+  Pages contain up to 20 plans ordered newest week first, including upcoming
+  plans. Page is a nonnegative integer.
+- `POST /api/check-ins` returns 201, a Location header and CheckIn. Example:
+
+```json
+{
+  "planId": "<weekly-plan-uuid>",
+  "expectedRoadmapRevision": 0,
+  "actualHours": 3,
+  "availableHoursNextWeek": 2,
+  "difficultyRating": 3,
+  "confidenceRating": null,
+  "energyOrCapacityBand": "LOW",
+  "blockers": ["NO_TIME"],
+  "notes": null,
+  "constraint": {
+    "type": "EXAMS",
+    "startDate": "2026-09-21",
+    "endDate": "2026-09-27"
+  },
+  "tasks": [{ "taskId": "<planned-task-uuid>", "outcome": "PARTIAL" }]
+}
+```
+
+Submit exactly one outcome per planned task: COMPLETED, PARTIAL, MISSED or
+DEFERRED. Hours must be whole numbers from 0 through 168, including zero next-week
+capacity. Energy is LOW/MEDIUM/HIGH. Optional difficulty/confidence are 1–5.
+Blockers accept NO_TIME, TOO_DIFFICULT, UNCLEAR_NEXT_STEP, RESOURCE_ACCESS or OTHER
+(up to five). Optional notes have a 500-character limit. Constraint categories:
+EXAMS, ASSIGNMENTS, INTERNSHIP, HEALTH_OR_PERSONAL, TRAVEL, PLACEMENT_PREP, OTHER.
+Dates must be ordered and span at most 366 days; no private explanation required.
+
+WeeklyPlan contains `id`, `roadmapId`, snapshot `roadmapTitle`, `weekStart`,
+`capacityHours`, summed `plannedHours`, live `roadmapRevision`, `tasks`, `reason`,
+and `createdAt`. Each task has `taskId`, snapshot `title`, and `plannedHours`.
+CheckIn contains identity/week, planned/actual/next-availability hours, the optional
+ratings/notes/constraint, energy/blockers, task outcomes with snapshot titles,
+`nextPlan`, `explanation`, and `createdAt`. Nullable response fields may be omitted.
+
+Completed/partial outcomes use existing roadmap transition and prerequisite
+validation and save atomically with the reflection and next plan. Profile skills
+are unchanged. Missed/deferred outcomes retain roadmap states. The next allocation
+excludes completed/deferred work and respects reported capacity. An existing
+next-week snapshot is preserved, with an explanation, even if the late check-in
+reports different availability. The two values remain distinct in the response.
+
+Invalid fields, dates, task membership/outcome coverage, or future submissions
+return `400 VALIDATION_FAILED`. Another owner's plan/roadmap returns
+`404 RESOURCE_NOT_FOUND`. Duplicate check-ins and stale roadmap revisions return
+`409 RESOURCE_CONFLICT` without partial writes. One final check-in per saved
+week is supported; there is no edit/delete endpoint. See
+[weekly policy](../progress/WEEKLY_CHECK_INS.md).
+
 ## Error response format
 
 ```json

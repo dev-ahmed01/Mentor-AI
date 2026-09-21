@@ -60,6 +60,15 @@ public class RoadmapService {
     public RoadmapResponse get(Authentication authentication, UUID id) { return describe(requireOwned(authentication, id)); }
 
     @Transactional
+    public RoadmapResponse lockForUpdate(Authentication authentication, UUID id, long expectedRevision) {
+        Roadmap roadmap = roadmaps.findOwnedForUpdate(id, auth.requireUser(authentication).getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Roadmap was not found."));
+        if (!roadmap.getRevision().equals(expectedRevision))
+            throw new ConflictException("This roadmap changed. Refresh it before submitting the check-in.");
+        return describe(roadmap);
+    }
+
+    @Transactional
     public RoadmapResponse update(Authentication authentication, UUID id, UpdateRoadmapRequest request) {
         Roadmap roadmap = requireOwned(authentication, id);
         if (!roadmap.getRevision().equals(request.expectedRevision()))

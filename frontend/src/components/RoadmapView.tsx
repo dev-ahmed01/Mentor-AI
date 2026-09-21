@@ -38,9 +38,10 @@ export function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
       <Card><p className="eyebrow">Current phase</p><h3>{currentPhase?.title ?? "No unfinished tasks"}</h3>
         <p className="eyebrow">Next action</p>{roadmap.nextAction ? <><h3>{roadmap.nextAction.title}</h3><Badge>Learn now</Badge><p>Use the task editor below to record your progress.</p></> : <p>{currentPhase ? "Remaining work needs prerequisite review. Skipped foundations do not unlock later tasks." : "Review completed and skipped work below. You can reopen a task when needed."}</p>}
       </Card>
-      <Card><h3>This week</h3><p>A focus suggestion within your saved availability. Partial allocations are expected; progress check-ins arrive in a later phase.</p>
+      <Card><h3>Suggested focus</h3><p>A focus suggestion within your roadmap’s saved availability. Your weekly plan keeps a separate record of what you chose to work on.</p>
         {roadmap.thisWeek.length ? <ul>{roadmap.thisWeek.map((item) => <li key={item.taskId}>{item.title}<strong className="weekly-hours">{item.plannedHours} hours of focus</strong></li>)}</ul> : <p className="empty-state">No actionable tasks are assigned.</p>}
         <p>Changing your profile does not silently regenerate this saved roadmap.</p>
+        <Link href="/progress" className="text-link">Open weekly plan and check-in</Link>
       </Card>
     </div>
     <section aria-labelledby="roadmap-stages-title"><h2 id="roadmap-stages-title">Your learning stages</h2><p>The current stage is open. Expand later stages when you need them.</p>

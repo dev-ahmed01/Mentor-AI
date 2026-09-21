@@ -5,10 +5,10 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 3 personalized roadmaps. Authentication, normalized
+> Current status: hackathon Phase 4 weekly progress and check-ins. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
-> progress, and career-reality pages are implemented. Market and mentor features
+> progress, weekly plans, life-aware check-ins, and career-reality pages are implemented. Market and mentor features
 > remain explicitly unavailable rather than being
 > backed by invented evidence.
 
@@ -63,6 +63,15 @@ original foundation/career phase numbers above.
 - Editable titles, effort and task state with prerequisite and revision safeguards
 - Preserved previous plans and additive V4 migration
 - Versioned [generation policy](docs/roadmap/GENERATION.md); no automatic adaptation
+
+## Implemented in hackathon Phase 4
+
+- Saved weekly plans with planned hours, actual hours and task outcomes
+- Short check-in with partial/missed/deferred work, capacity and optional constraints
+- Explicit roadmap progress updates with atomic saves and stale-revision protection
+- Next-week allocation, including zero-hour weeks, plus private paginated history
+- Additive V5 migration and [weekly check-in policy](docs/progress/WEEKLY_CHECK_INS.md)
+- Existing plans remain saved; adaptive roadmap sequencing follows in Phase 5
 
 ## Architecture
 

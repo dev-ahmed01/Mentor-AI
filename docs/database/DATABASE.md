@@ -76,10 +76,31 @@ revision. Failed batches and concurrent conflicts roll back the transaction.
 Reads always resolve the authenticated owner. Skill/profile records are not
 updated when a roadmap task is completed. See [policy](../roadmap/GENERATION.md).
 
+## Hackathon Phase 4 schema
+
+`V5__weekly_progress.sql` adds:
+
+- `weekly_plans`: user/roadmap links, Monday week start, saved title/capacity,
+  allocated hours, source revision, reason and creation timestamp. A unique
+  user/week key prevents duplicate snapshots.
+- `weekly_plan_tasks`: ordered task/title/hour allocations with foreign keys and
+  unique task and position keys within the plan.
+- `weekly_check_ins`: unique plan link, owner, actual/next-week hours, optional
+  ratings/notes, energy, next-plan link, explanation and creation timestamp.
+- `weekly_task_progress`: ordered outcome records with snapshot task titles.
+- `weekly_check_in_blockers`: ordered generic blocker categories.
+- `weekly_temporary_constraints`: optional category/date interval per check-in.
+
+All public IDs are UUIDs. Foreign keys and uniqueness back application ownership
+and duplicate protection. Integer hour bounds and rating/date checks supplement
+request validation. Service transactions cover roadmap edits, check-in rows and
+the new weekly allocation, so rejected submissions cannot leave partial progress.
+Prior migrations are unchanged; existing roadmaps and student data are retained.
+
 ## Planned schema growth
 
 Later migrations add market observations/snapshots with provenance and freshness;
-jobs and job skills; projects, check-ins and adaptive roadmap revisions; mentor
+jobs and job skills; projects and adaptive roadmap revisions; mentor
 conversations; learning resources; and vectorized evidence chunks. Vector columns
 supplement relational ownership and filtering; they never replace those controls.
 

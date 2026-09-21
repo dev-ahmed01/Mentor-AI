@@ -164,3 +164,46 @@ Weekly focus is a capacity suggestion, not a dated hours-worked ledger. Completi
 is self-reported and does not change profile proficiency. No Phase 4 check-ins or
 automatic adaptation were added. Previously recorded npm audit findings remain
 outside this phase. Next: Phase 4 weekly check-ins and progress tracking.
+
+## Phase 4 — weekly progress and life-aware check-ins (16–22 September 2026)
+
+- Added V5 for weekly plans, allocated tasks, check-ins, task outcomes, blocker
+  categories and optional temporary constraints. Existing migrations are unchanged.
+- Added authenticated plan creation, current-week reads, final check-in submission
+  and private history with 20-item pages. Weeks start Monday in UTC.
+- Added atomic explicit roadmap completion/partial updates, stale-revision and
+  duplicate protection, and next-week allocations bounded by reported capacity.
+- Added zero-hour weeks, late reflections, deferred work and preserved existing
+  next-week snapshots. Generic constraint categories require no private explanation.
+- Added `/progress`, short controlled forms, planned/actual summaries, completed
+  and carried-forward work, deferred work, history and next-plan explanations.
+- Added [weekly policy](progress/WEEKLY_CHECK_INS.md), API/database/architecture
+  documentation and navigation from the dashboard and roadmap.
+
+| Check | Result |
+| --- | --- |
+| Baseline | 34 tests passed before implementation |
+| New tests before implementation | Five expected missing-endpoint failures |
+| Full H2 suite, clean V1–V5 | 44 tests, zero failures/errors |
+| Full PostgreSQL 17.11 suite, clean V1–V5 | 44 tests, zero failures/errors; packaged backend successfully |
+| PostgreSQL V4-to-V5 upgrade | Passed; existing profile, skill, task and roadmap rows unchanged |
+| Partial/missed/deferred/completed outcomes and capacity boundaries | Passed |
+| Temporary constraints, dates, integer-hour/rating validation | Passed |
+| Ownership, duplicate check-in, stale revision, private paginated history | Passed |
+| Late submission and existing next-week snapshot preservation | Passed |
+| Frontend lint and production build | Passed; `/progress` included |
+| Live HTTP with production backend and PostgreSQL | Plan/check-in/history, task updates, constraint, duplicate 409 and unchanged profile passed |
+| Authenticated production server rendering | Submitted summary and zero-hour next-plan message passed |
+| Independent frontend review | Fixed reported availability versus preserved plan capacity display; focused re-review passed |
+| Final independent code review | No actionable findings |
+| Interactive browser, mobile and keyboard checks | Not completed; user explicitly chose API/build verification only |
+
+Verification used isolated loopback services and synthetic accounts. The live
+HTTP/server-rendering checks resumed on 22 September after usage-limit
+interruptions. The initial server-rendering smoke used a raw Cookie header that
+did not authenticate; the corrected HTTP cookie-container check passed. This
+does not substitute for interactive browser coverage, which remains unverified.
+
+Next-week allocation uses stated capacity and explicit task outcomes. Broader
+adaptive sequencing and roadmap revision policy remain Phase 5. Previously
+recorded npm dependency-audit findings remain outside this phase.

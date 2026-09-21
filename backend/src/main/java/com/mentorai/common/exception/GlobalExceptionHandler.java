@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import com.mentorai.roadmap.service.RoadmapValidationException;
+import com.mentorai.progress.service.ProgressValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -34,6 +35,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RoadmapValidationException.class)
     ResponseEntity<ApiError> handleRoadmapValidation(RoadmapValidationException exception, HttpServletRequest request) {
+        return response(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", exception.getMessage(), Map.of(), request);
+    }
+
+    @ExceptionHandler(ProgressValidationException.class)
+    ResponseEntity<ApiError> handleProgressValidation(ProgressValidationException exception, HttpServletRequest request) {
         return response(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", exception.getMessage(), Map.of(), request);
     }
 

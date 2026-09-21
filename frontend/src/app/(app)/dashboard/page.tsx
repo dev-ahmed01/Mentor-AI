@@ -55,6 +55,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           <h3>Turn priorities into a plan</h3>
           <p>Create an ordered roadmap, adjust task effort, and record progress at a pace that fits your available time.</p>
           <Link href="/roadmap" className="text-link">Open or create your roadmap</Link>
+          <p><Link href="/progress" className="text-link">Plan your week or check in</Link></p>
         </Card>
       </div>
     </div>
