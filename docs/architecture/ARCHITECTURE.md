@@ -188,3 +188,17 @@ the learning resume point and blocker questions. Its controlled edit form posts
 through an authenticated Server Action; the backend revalidates all values and
 eligibility. Historical plans that were already checked in cannot be overwritten.
 See [the complete policy](../progress/ADAPTIVE_ROADMAPS.md).
+## Phase 6 simulation flow
+
+The simulator module calculates a transient before/after view from one recorded
+profile and one active career. `SkillSimulationService` creates an immutable
+proficiency map plus a hypothetical copy, then calls the explicit-map overloads
+in `LearningDecisionService` and `SkillDependencyService`. Existing authenticated
+calculation methods delegate to the same code, preserving policy behavior.
+
+Only the selected skill is raised to at least INTERMEDIATE. No entity is changed
+or saved, and the module has no dependency on roadmap/progress mutation services.
+The response retains missing-ancestor context and internal demo-data labels.
+The frontend authenticates its calculation Server Action and renders transient
+before/after state; changing selections discards the old preview. No persistence,
+cache invalidation, AI provider or market ingestion is introduced in this phase.

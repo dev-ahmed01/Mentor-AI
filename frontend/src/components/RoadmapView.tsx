@@ -29,6 +29,7 @@ export function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
     <Card>
       <div className="card-heading"><span>{roadmap.careerName}</span><Badge>Saved · DEMO DATA</Badge></div>
       <h2>{roadmap.title}</h2>
+      <Link href={`/simulator?careerId=${roadmap.careerId}`} className="text-link">Explore what learning a skill could unlock</Link>
       <p>Revision {roadmap.revision} · {roadmap.weeklyHours} hours/week saved with this plan.</p>
       <p>Effort estimates are editable starting points, not validated mastery times. Stages describe learning order, not fixed calendar weeks. Market evidence is unavailable.</p>
       <details className="roadmap-edit"><summary>Rename roadmap</summary><RoadmapTitleEditor key={`${roadmap.id}-${roadmap.revision}`} id={roadmap.id} revision={roadmap.revision} title={roadmap.title} /></details>

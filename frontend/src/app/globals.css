@@ -314,3 +314,9 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 .adaptation-task { display: grid; gap: .75rem; padding-block: .75rem; border-bottom: 1px solid var(--border); }
 .adaptation-task input[type="checkbox"], .adaptation-toggle input { width: auto; }
 .adaptation-task .field { max-width: 28rem; }
+.simulation-metrics { display: grid; gap: 1rem; }
+.simulation-metrics dd { margin: .25rem 0 0; font-size: 1.5rem; font-weight: 700; }
+.simulation-table-wrap { overflow-x: auto; }
+.simulation-table { width: 100%; border-collapse: collapse; }
+.simulation-table th, .simulation-table td { padding: .75rem; text-align: left; border-bottom: 1px solid var(--border); }
+.simulation-table caption { text-align: left; margin-bottom: .5rem; }

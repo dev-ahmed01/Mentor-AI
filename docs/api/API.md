@@ -310,3 +310,37 @@ NORMAL/MAINTENANCE `mode` and task ID/title/planned-hour records. Accepted snaps
 retain the exact student choice; the proposal is never overwritten.
 
 See [adaptation policy](../progress/ADAPTIVE_ROADMAPS.md) for thresholds and dates.
+## Phase 6: skill simulation
+
+### `POST /api/simulator/skill`
+
+Authenticated, read-only calculation. No profile, roadmap or progress record is
+changed or created. The request has no user ID; it uses the bearer token's owner.
+
+```json
+{
+  "skillId": "<existing-skill-uuid>",
+  "targetCareerId": "<active-career-uuid>"
+}
+```
+
+Returns 200 with `calculationVersion: skill-simulation-v1`,
+`resultLabel: SIMULATION`, `dataLabel: DEMO DATA`,
+`marketEvidenceStatus: UNAVAILABLE`, skill/career identities and names,
+optional recorded proficiency, effective assumed proficiency, `profileUpdatedAt`,
+`assumption`, selected-skill prerequisite context, `before`, `after`,
+`newlySatisfiedRequirements`, `newlyEligibleSkills`, and `noChange`.
+
+Before/after states contain `requiredSatisfied`, `requiredTotal`,
+`preferredSatisfied`, `preferredTotal`, `eligibleUnfinishedSkills` and `priorities`
+(the existing learning-priorities response). Direct career requirements are met
+at INTERMEDIATE or above. Assumed proficiency is the higher of recorded and
+INTERMEDIATE. Missing prerequisites remain missing; only the selected skill's
+in-memory value changes. Counts are internal catalog skills, not jobs or overall
+career-fit percentages.
+
+Malformed/missing UUIDs return 400; missing skills and inactive/missing careers
+return 404; missing authentication returns 401. A skill outside the selected
+career's graph is valid and may produce `noChange: true`. Missing profile skills
+or weekly availability do not block calculation. See the
+[simulation policy](../simulator/SKILL_SIMULATION.md).

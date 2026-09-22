@@ -244,3 +244,41 @@ Old check-in clients may omit `expectedPlanRevision` for an unrevised plan (vers
 0); accepted revisions require the refreshed value. Constraints remain active
 through their recorded end date. No AI, market estimates, career changes or effort
 recalculation were introduced. Next: Phase 6 opportunity unlock simulator.
+
+## Phase 6 — opportunity unlock simulator (22 September 2026)
+
+- Added authenticated `POST /api/simulator/skill` and `/simulator`, with links
+  from navigation, career details and roadmaps.
+- Compare recorded and hypothetical required/preferred coverage, prerequisite
+  eligibility and full learning priorities. Raise one skill to at least
+  Intermediate in memory; preserve higher proficiency and missing foundations.
+- Show newly satisfied requirements, newly eligible learning, missing-prerequisite
+  caveats and no-change cases. Explicit SIMULATION / DEMO labels make clear that
+  these are internal catalog counts, with no live jobs or hiring probability.
+- Reuse existing dependency and learning-priority policies without changing saved
+  profiles, career goals, roadmaps, weekly plans, check-ins or revision history.
+- Documented the [simulation policy](simulator/SKILL_SIMULATION.md), API and
+  architecture. No schema migration or new dependency; database remains V6.
+
+| Check | Result |
+| --- | --- |
+| Initial RED scenarios | Seven missing-endpoint failures observed |
+| Full H2 suite | 65 tests, zero failures/errors/skips |
+| Full PostgreSQL 17.11 suite | 65 tests, zero failures/errors/skips; backend package built |
+| Coverage and eligibility | Direct/foundation unlocks, missing ancestors, advanced proficiency, unrelated skill and empty profile passed |
+| Authentication, validation and preservation | Unauthorized/invalid/missing resources, repeated responses, account isolation and saved-data snapshots passed |
+| Independent review | Fixed stale scenario remaining visible after career selection changes |
+| Frontend lint / TypeScript / production build | Passed after review fix; `/simulator` included |
+| Live API / production SSR | Coverage, unlocks, missing-ancestor protection, repeatability, unchanged profile/roadmap/weekly plan and authenticated page passed |
+| JavaScript server-action HTTP protocol | Passed; authenticated action returned simulation and unlock data |
+| Graphify AST update | Passed: 1960 nodes / 4628 edges / 129 communities |
+| No-JavaScript multipart form submission | Unresolved timeout with PowerShell and Node HTTP clients; not verified |
+| Interactive browser, mobile, keyboard | Not run, per user's API/build-only preference |
+
+The form timeout is limited to the separately tested multipart submission path;
+its cause has not been established. The JavaScript action request and backend API
+succeed, but that does not establish interactive browser or no-JavaScript support.
+Verification used synthetic accounts and the existing isolated PostgreSQL cluster,
+which was restarted after the interruption without resetting data.
+
+Next: Phase 7 market intelligence and evidence.

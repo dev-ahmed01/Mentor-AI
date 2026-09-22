@@ -116,3 +116,9 @@ supplement relational ownership and filtering; they never replace those controls
 
 Synthetic development records must carry a `DEMO DATA` label and are never
 counted as live market evidence.
+## Hackathon Phase 6 data access
+
+The opportunity simulator adds no tables or migration. Flyway remains at V6.
+It reads active careers, canonical skills, dependency edges and the authenticated
+profile, then calculates against copied proficiency maps. Simulation never saves
+profiles, student skills, roadmaps, weekly plans, check-ins or adaptation history.

@@ -13,6 +13,7 @@ export function AppNav({ user }: { user: User }) {
           <Link href="/careers">Careers</Link>
           <Link href="/roadmap">Roadmap</Link>
           <Link href="/progress">Weekly check-in</Link>
+          <Link href="/simulator">Simulator</Link>
           <Link href="/profile">Profile</Link>
         </nav>
         <div className="account-menu">

@@ -37,14 +37,19 @@ public class LearningDecisionService {
     }
 
     public LearningPrioritiesResponse priorities(UUID careerId, Authentication authentication) {
-        var career = careers.findByIdAndActiveTrue(careerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Career was not found."));
         var profile = profiles.get(authentication);
         Map<UUID, SkillProficiency> known = profile.skills().stream()
                 .collect(Collectors.toMap(item -> item.id(), item -> item.proficiency()));
+        return priorities(careerId, known, profile.timeAvailablePerWeek());
+    }
+
+    public LearningPrioritiesResponse priorities(UUID careerId, Map<UUID, SkillProficiency> proficiencies, Integer weeklyHours) {
+        Map<UUID, SkillProficiency> known = Map.copyOf(proficiencies);
+        var career = careers.findByIdAndActiveTrue(careerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Career was not found."));
         Map<UUID, CareerSkill> direct = career.getSkills().stream()
                 .collect(Collectors.toMap(item -> item.getSkill().getId(), Function.identity()));
-        List<SkillPrerequisitesResponse> readiness = dependencies.forCareerWithFoundations(careerId, authentication);
+        List<SkillPrerequisitesResponse> readiness = dependencies.forCareerWithFoundations(careerId, known);
         Map<UUID, SkillPrerequisitesResponse> byId = readiness.stream()
                 .collect(Collectors.toMap(SkillPrerequisitesResponse::skillId, Function.identity()));
         List<Candidate> candidates = new ArrayList<>();
@@ -73,8 +78,8 @@ public class LearningDecisionService {
                     relevance, importance, bottlenecks));
         }
         return new LearningPrioritiesResponse(career.getId(), career.getName(), LearningPriorityPolicy.VERSION,
-                "DEMO DATA", profile.timeAvailablePerWeek(), policy.focusSlots(profile.timeAvailablePerWeek()),
-                "UNAVAILABLE", 0, policy.decide(candidates, profile.timeAvailablePerWeek()));
+                "DEMO DATA", weeklyHours, policy.focusSlots(weeklyHours),
+                "UNAVAILABLE", 0, policy.decide(candidates, weeklyHours));
     }
 
     private boolean atLeast(SkillProficiency actual, SkillProficiency target) {

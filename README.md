@@ -5,7 +5,7 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 5 adaptive roadmap proposals. Authentication, normalized
+> Current status: hackathon Phase 6 opportunity unlock simulator. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, and career-reality pages are implemented. Market and mentor features
@@ -81,6 +81,14 @@ original foundation/career phase numbers above.
 - Repeated-deferral blocker questions and safe capacity limits
 - Ownership, stale-form protection and serialized check-in/acceptance operations
 - Additive V6 migration and [adaptive roadmap policy](docs/progress/ADAPTIVE_ROADMAPS.md)
+
+## Implemented in hackathon Phase 6
+
+- Read-only “what if I learn this skill?” simulation for a selected career
+- Before/after required and preferred skill coverage, eligibility and priorities
+- Honest prerequisite caveats, already-known/no-effect states and demo-data labels
+- No profile/roadmap updates, job counts, AI or new schema migration
+- [Simulation policy](docs/simulator/SKILL_SIMULATION.md) and `/simulator` UI
 
 ## Architecture
 
