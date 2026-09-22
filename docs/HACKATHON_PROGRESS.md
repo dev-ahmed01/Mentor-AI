@@ -282,3 +282,45 @@ Verification used synthetic accounts and the existing isolated PostgreSQL cluste
 which was restarted after the interruption without resetting data.
 
 Next: Phase 7 market intelligence and evidence.
+
+## Phase 7 — market intelligence and evidence (22–23 September 2026)
+
+- Added opt-in Arbeitnow collection with a fixed endpoint, bounded response,
+  first-100-record sampling and persistent six-hour attempt cooldown.
+- Store immutable observations, provenance, snapshot membership and skill
+  frequencies. Show publication windows, source scope and evidence limitations.
+- Added explicit, private snapshot comparisons with frozen scoring inputs and
+  evidence. Freshness, sample, employer and extraction-coverage gates control
+  market influence; existing profile-only APIs and saved learning plans remain unchanged.
+- Added authenticated market pages, saved comparison URLs and navigation links.
+  V7 adds market tables without changing existing tables or migrations.
+- Documented the [evidence policy](market/EVIDENCE_POLICY.md), API, database and architecture.
+
+| Check | Result |
+| --- | --- |
+| Initial RED scenarios | Missing endpoint/schema and targeted regressions reproduced before fixes |
+| Final H2 suite | 81 tests, zero failures/errors/skips |
+| Final PostgreSQL 17.11 suite | 81 tests, zero failures/errors/skips; backend package built |
+| Clean migration / upgrade | V1–V7 passed; V6-to-V7 preserved row counts and ordered content hashes for all 32 existing tables |
+| Evidence integrity | Deduplication, revisions, provenance, stale/sparse/low-coverage gates, invalid dates/URLs and cooldown passed |
+| Saved decisions | Scoring math, prerequisites, fallback, ownership and immutable inputs/results passed |
+| Independent review | Three findings reproduced and fixed: controlled vocabulary, ambiguous requirement cues and complete saved scoring inputs |
+| Provider transport | Large valid payload accepted; over-5-MB response rejected; 250-row page bounded to first 100 |
+| Frontend lint / TypeScript / production build | Passed; both market routes included |
+| Live source | SUCCESS: 100 received, 91 accepted, 9 rejected, 10 career snapshots |
+| Live API / production SSR | Provenance, private immutable decisions, profile/roadmap/weekly-plan preservation, invalid inputs and authenticated pages passed |
+| JavaScript server-action HTTP protocol | Save and redirect passed |
+| Live sparse-sample fallback | Full Stack Developer: 5 listings / 2 employers, INSUFFICIENT_SAMPLE, market weight 0 |
+| Graphify AST update | Passed: 2149 nodes / 5222 edges / 143 communities |
+| Interactive browser, mobile, keyboard | Not run, per user's API/build-only preference |
+
+The live source exposed two adapter assumptions: a response above the original
+2 MB limit and a 250-record page. Regression tests now cover the bounded 5 MB
+response and first-100 prefix. Failed attempts and their cooldowns were preserved;
+the final live check used a separate isolated database. A repeated test run against
+an earlier fixture database encountered duplicate test emails; the final complete
+PostgreSQL suite passed in a fresh isolated database without resetting prior data.
+The source remains a limited, Germany-focused sample, not total job demand or
+hiring probability. Collection is disabled by default.
+
+Next: Phase 8 job-description matching.

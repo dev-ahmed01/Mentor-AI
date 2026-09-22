@@ -202,3 +202,22 @@ The response retains missing-ancestor context and internal demo-data labels.
 The frontend authenticates its calculation Server Action and renders transient
 before/after state; changing selections discards the old preview. No persistence,
 cache invalidation, AI provider or market ingestion is introduced in this phase.
+## Phase 7 evidence flow
+
+An optional `MarketCollector` calls replaceable `MarketDataProvider` through
+`MarketIngestionService`. Arbeitnow's fixed public API is the initial adapter;
+student requests never trigger provider traffic. A persisted attempt claim
+enforces cooldown across restarts/instances. HTTP bounds, validation and
+normalization precede transactional immutable observation/snapshot writes.
+
+`MarketNormalizationService` extracts conservative skill mentions from untrusted
+source text; `MarketAnalyticsService` builds bounded career samples with full
+provenance and eligibility gates. `MarketRepository` uses the existing managed
+JDBC datasource and Flyway tables alongside JPA catalog/profile reads.
+
+`MarketDecisionService` evaluates an explicit snapshot, reuses profile scoring
+and optional learning-priority bonuses, and saves a private immutable result.
+Existing default career/priority/simulator and roadmap flows remain profile-only.
+The Next.js `/market` and saved-comparison pages render bounded typed evidence,
+source links, counts, freshness, limits and scoring explanations without raw HTML.
+See [policy and rollback](../market/EVIDENCE_POLICY.md).

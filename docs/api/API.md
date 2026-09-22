@@ -344,3 +344,35 @@ return 404; missing authentication returns 401. A skill outside the selected
 career's graph is valid and may produce `noChange: true`. Missing profile skills
 or weekly availability do not block calculation. See the
 [simulation policy](../simulator/SKILL_SIMULATION.md).
+
+## Phase 7 market evidence
+
+All routes require authentication. There is no public refresh, arbitrary URL,
+provider selection or raw observation upload API. Collection is operator-enabled.
+
+| Method and route | Result |
+| --- | --- |
+| `GET /api/market?careerId={uuid}` | Latest `{status,snapshot?,message}`, or UNAVAILABLE when no snapshot exists |
+| `GET /api/market/sources` | Source ID, last attempt/success timestamps and last collection status |
+| `GET /api/market/snapshots/{id}` | Immutable snapshot with freshness evaluated at request time |
+| `GET /api/market/observations/{id}` | Normalized provenance and extracted skills; no raw description |
+| `POST /api/market/snapshots/{id}/decisions` | 201: private immutable evidence/profile comparison, no request body |
+| `GET /api/market/decisions/{id}` | Saved owner-only result, without recalculation |
+
+Missing career/snapshot/observation or another user's decision returns 404;
+malformed UUIDs return 400; absent authentication returns 401. Insufficient or
+stale evidence is a successful evidence response with an explicit status. A
+comparison against such evidence retains profile-only scoring and market weight 0.
+
+Snapshots contain ID/career, source/backlink/context, collection/window/freshness
+timestamps, sample/employer/skill-coverage counts, processing version, title
+matching phrases, per-skill required/preferred/unspecified counts, observation
+membership and limitations. Saved comparisons additionally retain input skill
+levels/confidence, interests/domains/languages/goals, relevant catalog inputs,
+base scoring version, weekly availability, profile timestamp, evaluation time/status, base
+career factors, market compatibility/weight, final indicator, priorities and
+versioned methodology. Raw source payloads are never exposed.
+
+Existing `/api/careers/analyze`, `/api/decisions/learning-priorities` and
+`/api/simulator/skill` retain their profile-only behavior. See
+[evidence policy](../market/EVIDENCE_POLICY.md) for formulas and eligibility.

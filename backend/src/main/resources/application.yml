@@ -33,6 +33,9 @@ management:
       show-details: never
 
 mentorai:
+  market:
+    enabled: ${MARKET_COLLECTION_ENABLED:false}
+    refresh-on-start: ${MARKET_REFRESH_ON_START:false}
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:3000}
   security:

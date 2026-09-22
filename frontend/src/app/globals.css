@@ -320,3 +320,5 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 .simulation-table { width: 100%; border-collapse: collapse; }
 .simulation-table th, .simulation-table td { padding: .75rem; text-align: left; border-bottom: 1px solid var(--border); }
 .simulation-table caption { text-align: left; margin-bottom: .5rem; }
+.market-observations { list-style: none; padding: 0; display: grid; gap: 1.5rem; }
+.market-observations > li { border-bottom: 1px solid var(--line); padding-bottom: 1rem; overflow-wrap: anywhere; }

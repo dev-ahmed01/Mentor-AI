@@ -44,6 +44,10 @@ public class LearningDecisionService {
     }
 
     public LearningPrioritiesResponse priorities(UUID careerId, Map<UUID, SkillProficiency> proficiencies, Integer weeklyHours) {
+        return priorities(careerId,proficiencies,weeklyHours,Map.of());
+    }
+
+    public LearningPrioritiesResponse priorities(UUID careerId, Map<UUID, SkillProficiency> proficiencies, Integer weeklyHours, Map<UUID,Integer> marketBonuses) {
         Map<UUID, SkillProficiency> known = Map.copyOf(proficiencies);
         var career = careers.findByIdAndActiveTrue(careerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Career was not found."));
@@ -77,9 +81,10 @@ public class LearningDecisionService {
             candidates.add(new Candidate(item, current, own == null ? SkillProficiency.BEGINNER : SkillProficiency.INTERMEDIATE,
                     relevance, importance, bottlenecks));
         }
-        return new LearningPrioritiesResponse(career.getId(), career.getName(), LearningPriorityPolicy.VERSION,
+        boolean market=!marketBonuses.isEmpty();
+        return new LearningPrioritiesResponse(career.getId(), career.getName(), market?"learning-priorities-market-v1":LearningPriorityPolicy.VERSION,
                 "DEMO DATA", weeklyHours, policy.focusSlots(weeklyHours),
-                "UNAVAILABLE", 0, policy.decide(candidates, weeklyHours));
+                market?"PINNED_MARKET_SAMPLE":"UNAVAILABLE", market?10:0, policy.decide(candidates, weeklyHours,marketBonuses));
     }
 
     private boolean atLeast(SkillProficiency actual, SkillProficiency target) {

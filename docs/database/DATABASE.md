@@ -122,3 +122,20 @@ The opportunity simulator adds no tables or migration. Flyway remains at V6.
 It reads active careers, canonical skills, dependency edges and the authenticated
 profile, then calculates against copied proficiency maps. Simulation never saves
 profiles, student skills, roadmaps, weekly plans, check-ins or adaptation history.
+## Phase 7 — immutable market evidence (V7)
+
+- `market_sources`: persistent attempt cooldown and last collection outcome.
+- `market_observations`: source ID/URL, first collection and publication time,
+  content hash, processing version, original untrusted payload and normalized JSON.
+  Unique source/ID/hash prevents duplicate revisions.
+- `market_snapshots`: immutable per-career aggregate JSON, collection time and
+  processing version, indexed by career/time.
+- `market_snapshot_observations`: explicit immutable evidence membership with FKs.
+- `market_decisions`: owner-only saved snapshot/profile calculation and version;
+  indexed by owner/ID and cascaded on user deletion.
+
+V7 adds tables only. No previous migration or business row is changed. Source
+state contains an uncollected source identifier, never synthetic market evidence.
+Rollback is application rollback with collection disabled; keep additive tables
+and Flyway history. The [policy](../market/EVIDENCE_POLICY.md) defines provenance,
+aggregation, eligibility, retention limits and historical reproducibility.

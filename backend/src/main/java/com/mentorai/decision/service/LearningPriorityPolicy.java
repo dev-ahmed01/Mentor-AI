@@ -7,6 +7,8 @@ import com.mentorai.skills.entity.SkillProficiency;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 /** Versioned, illustrative ordering policy. Scores are not market or employment probabilities. */
@@ -23,7 +25,12 @@ public class LearningPriorityPolicy {
     }
 
     public List<LearningDecision> decide(List<Candidate> candidates, Integer weeklyHours) {
-        var ordered = candidates.stream().sorted(Comparator.comparingInt(this::score).reversed()
+        return decide(candidates,weeklyHours,Map.of());
+    }
+
+    public List<LearningDecision> decide(List<Candidate> candidates, Integer weeklyHours, Map<UUID,Integer> marketBonuses) {
+        boolean market=!marketBonuses.isEmpty();
+        var ordered = candidates.stream().sorted(Comparator.comparingInt((Candidate item)->score(item,marketBonuses)).reversed()
                 .thenComparing(item -> item.readiness().name())
                 .thenComparing(item -> item.readiness().skillId())).toList();
         List<LearningDecision> result = new ArrayList<>();
@@ -56,13 +63,13 @@ public class LearningPriorityPolicy {
                     reasons.add("HIGHER_PRIORITY_FOCUS_FIRST");
                 }
             }
-            reasons.add("MARKET_EVIDENCE_UNAVAILABLE");
+            reasons.add(market?"PINNED_MARKET_SAMPLE":"MARKET_EVIDENCE_UNAVAILABLE");
             int distance = Math.max(0, item.target().ordinal() - (item.current() == null ? -1 : item.current().ordinal()));
             String effort = targetMet(item) ? "TARGET_MET"
                     : item.current() == SkillProficiency.BEGINNER ? "DEVELOPING" : "FOUNDATIONS";
             result.add(new LearningDecision(item.readiness().skillId(), item.readiness().name(), priority,
-                    score(item), item.readiness(), item.relevance(), item.importance(), item.current(),
-                    item.target(), distance, effort, item.bottleneckCount(), List.copyOf(reasons), "MARKET_EVIDENCE_UNAVAILABLE"));
+                    score(item,marketBonuses), item.readiness(), item.relevance(), item.importance(), item.current(),
+                    item.target(), distance, effort, item.bottleneckCount(), List.copyOf(reasons), market?"PINNED_MARKET_SAMPLE":"MARKET_EVIDENCE_UNAVAILABLE"));
         }
         return List.copyOf(result);
     }
@@ -77,5 +84,9 @@ public class LearningPriorityPolicy {
         int closeness = item.current() == SkillProficiency.BEGINNER ? 10
                 : item.current() == SkillProficiency.AWARENESS ? 5 : 0;
         return Math.min(100, relevance + 4 * item.importance() + Math.min(20, 5 * item.bottleneckCount()) + closeness);
+    }
+
+    private int score(Candidate item,Map<UUID,Integer> bonuses) {
+        return targetMet(item)?0:Math.min(100,score(item)+Math.clamp(bonuses.getOrDefault(item.readiness().skillId(),0),0,10));
     }
 }

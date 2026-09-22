@@ -26,7 +26,7 @@ export default async function CareerDetailPage({ params }: { params: Promise<{ s
         <Card className="reality-facts">
           <div><span>Entry difficulty</span><strong>{career.entryDifficulty.toLowerCase().replaceAll("_", " ")}</strong></div>
           <div><span>Suggested study time</span><strong>{career.recommendedWeeklyHours} hours/week</strong></div>
-          <div><span>Market evidence</span><strong>Not yet validated</strong></div>
+          <div><span>Market evidence</span><Link href={`/market?careerId=${career.id}`} className="text-link">Inspect source samples</Link></div>
         </Card>
       </header>
 
@@ -58,7 +58,7 @@ export default async function CareerDetailPage({ params }: { params: Promise<{ s
 
       <section className="market-boundary" aria-labelledby="market-boundary-heading">
         <p className="eyebrow">Evidence boundary</p><h2 id="market-boundary-heading">Questions to validate in your market</h2>
-        <p>MentorAI does not yet have trusted regional hiring evidence. Treat these as research prompts, not demand claims.</p>
+        <p>These catalog prompts are not demand claims. <Link href={`/market?careerId=${career.id}`} className="text-link">Inspect collected evidence and its source, location and sample limits</Link> before using a market comparison.</p>
         <ul>{career.marketConsiderations.map((item) => <li key={item}>{item}</li>)}</ul>
       </section>
     </article>

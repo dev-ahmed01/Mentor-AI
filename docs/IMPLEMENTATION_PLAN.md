@@ -151,9 +151,9 @@ evidence IDs, source, collection time, data window, and sample size.
 
 The hackathon Phase 0 baseline is checkpointed. Phase 1 skill dependencies and
 Phase 2 learning priorities, Phase 3 personalized roadmaps and Phase 4 weekly
-progress/check-ins, Phase 5 adaptive roadmap proposals and Phase 6 opportunity
-simulation are implemented.
+progress/check-ins, Phase 5 adaptive roadmap proposals, Phase 6 opportunity
+simulation and Phase 7 market evidence are implemented.
 See [verification results](HACKATHON_PROGRESS.md).
-The next hackathon phase is Phase 7 market intelligence and evidence. The
+The next hackathon phase is Phase 8 job-description analysis and matching. The
 existing `career-fit-v1` formula and public APIs remain compatible. Do not jump
 to Spring AI/Ollama; the active hackathon plan introduces the mentor in Phase 9.

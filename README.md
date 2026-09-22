@@ -5,12 +5,12 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 6 opportunity unlock simulator. Authentication, normalized
+> Current status: hackathon Phase 7 market intelligence and evidence. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
-> progress, weekly plans, life-aware check-ins, and career-reality pages are implemented. Market and mentor features
-> remain explicitly unavailable rather than being
-> backed by invented evidence.
+> progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
+> and source-traceable market comparisons are implemented. Market collection is
+> opt-in; sparse or stale samples have no scoring weight. Mentor AI remains unavailable.
 
 ## Implemented in Phase 1
 
@@ -215,3 +215,17 @@ cache, pass `-Dmaven.repo.local=<your-existing-Maven-repository>` explicitly.
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Implemented in hackathon Phase 7
+
+- Replaceable, bounded public API ingestion with provenance, validation and deduplication
+- Immutable market snapshots with source, publication window, freshness and sample safeguards
+- `/market` source observations, skill frequencies and explicit evidence limitations
+- Private reproducible career/skill comparisons against a chosen snapshot
+- Default profile-only APIs and saved roadmaps retain their existing behavior
+- Additive V7 migration; [evidence policy and collection setup](docs/market/EVIDENCE_POLICY.md)
+
+Collection is off by default. For a permitted local collection, set
+`MARKET_COLLECTION_ENABLED=true` and `MARKET_REFRESH_ON_START=true` before starting
+the backend. It fetches one Arbeitnow page, then respects a persistent six-hour
+attempt cooldown. No credentials or arbitrary source URLs are accepted.
