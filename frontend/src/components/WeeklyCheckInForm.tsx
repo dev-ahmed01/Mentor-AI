@@ -26,7 +26,7 @@ export function StartWeeklyPlanForm({ roadmapId }: { roadmapId: string }) {
 }
 
 export function WeeklyCheckInForm({ plan }: { plan: WeeklyPlan }) {
-  const [state, action] = useActionState(submitCheckInAction.bind(null, plan.id, plan.roadmapRevision, plan.tasks.map((task) => task.taskId)), initialActionState);
+  const [state, action] = useActionState(submitCheckInAction.bind(null, plan.id, plan.roadmapRevision, plan.revision, plan.tasks.map((task) => task.taskId)), initialActionState);
   const [outcomes, setOutcomes] = useState<Record<string, WeeklyOutcome | "">>({});
   const [actual, setActual] = useState("");
   const [nextHours, setNextHours] = useState(String(plan.capacityHours));
@@ -55,7 +55,7 @@ export function WeeklyCheckInForm({ plan }: { plan: WeeklyPlan }) {
           </select>
         </label>)}</div>
       </> : <p>No tasks were allocated. You can still record your time and availability.</p>}
-      <p className="field-hint">Completed and partial outcomes update the roadmap. Deferring holds a task out of next week’s allocation; it stays in your roadmap.</p>
+      <p className="field-hint">{plan.mode === "MAINTENANCE" ? "These are review activities. Their outcomes record your week without changing roadmap task completion." : "Completed and partial outcomes update the roadmap. Deferring holds a task out of next week’s allocation; it stays in your roadmap."}</p>
       <label className="field"><span>Hours actually spent this week</span><input name="actualHours" type="number" min={0} max={168} step={1} required value={actual} onChange={(event) => setActual(event.target.value)} /></label>
     </fieldset>
     <fieldset><legend>2. What affected your capacity?</legend>
@@ -76,7 +76,7 @@ export function WeeklyCheckInForm({ plan }: { plan: WeeklyPlan }) {
     </fieldset>
     <fieldset><legend>3. Make room for next week</legend>
       <label className="field"><span>Realistic hours available next week</span><input name="availableHoursNextWeek" type="number" min={0} max={168} step={1} required value={nextHours} onChange={(event) => setNextHours(event.target.value)} /></label>
-      <p>Zero is okay. We’ll use the time you choose, without guessing from your energy or circumstances.</p>
+      <p>Zero is okay. Your reported availability is saved. Any suggestion to reduce the pace or enter maintenance mode is yours to review and accept.</p>
       <label className="field"><span>Temporary constraint (optional)</span><select name="constraintType" value={constraint} onChange={(event) => setConstraint(event.target.value)}>
         <option value="">None to record</option>{constraints.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
       </select></label>

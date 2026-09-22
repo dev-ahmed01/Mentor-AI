@@ -19,7 +19,7 @@ export async function startWeeklyPlanAction(roadmapId: string): Promise<ActionSt
   redirect("/progress");
 }
 
-export async function submitCheckInAction(planId: string, revision: number, taskIds: string[],
+export async function submitCheckInAction(planId: string, revision: number, planRevision: number, taskIds: string[],
   _: ActionState, form: FormData): Promise<ActionState> {
   const token = await getToken();
   if (!token) redirect("/login");
@@ -27,7 +27,7 @@ export async function submitCheckInAction(planId: string, revision: number, task
   const optionalRating = (name: string) => text(name) === "" ? null : Number(text(name));
   const constraintType = text("constraintType");
   const payload = {
-    planId, expectedRoadmapRevision: revision,
+    planId, expectedRoadmapRevision: revision, expectedPlanRevision: planRevision,
     actualHours: text("actualHours") === "" ? null : Number(text("actualHours")),
     availableHoursNextWeek: text("availableHoursNextWeek") === "" ? null : Number(text("availableHoursNextWeek")),
     difficultyRating: optionalRating("difficultyRating"), confidenceRating: optionalRating("confidenceRating"),
@@ -46,4 +46,25 @@ export async function submitCheckInAction(planId: string, revision: number, task
   revalidatePath("/roadmap");
   revalidatePath("/dashboard");
   redirect(`/progress?weekStart=${encodeURIComponent(saved.weekStart)}&saved=1`);
+}
+
+export async function acceptAdaptationAction(id: string, roadmapRevision: number, planRevision: number,
+  weekStart: string, _: ActionState, form: FormData): Promise<ActionState> {
+  const token = await getToken();
+  if (!token) redirect("/login");
+  const edit = form.get("editing") === "yes" ? {
+    capacityHours: form.get("capacityHours") === "" ? null : Number(form.get("capacityHours")),
+    tasks: form.getAll("selectedTask").map(String).map((taskId) => ({
+      taskId, plannedHours: form.get(`hours-${taskId}`) === "" ? null : Number(form.get(`hours-${taskId}`)),
+    })),
+  } : null;
+  try {
+    await apiRequest(`/api/adaptations/${encodeURIComponent(id)}/accept`, {
+      method: "POST", token, body: JSON.stringify({ expectedRoadmapRevision: roadmapRevision, expectedPlanRevision: planRevision, edit }),
+    });
+  } catch (error) {
+    return { error: error instanceof ApiClientError ? error.detail.message : "Your revised plan could not be saved. Your edits are still here." };
+  }
+  revalidatePath("/progress"); revalidatePath("/roadmap"); revalidatePath("/dashboard");
+  redirect(`/progress?weekStart=${encodeURIComponent(weekStart)}`);
 }

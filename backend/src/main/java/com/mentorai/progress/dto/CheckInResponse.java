@@ -3,7 +3,7 @@ import com.mentorai.progress.entity.ProgressEnums.*; import java.time.Instant; i
 public record CheckInResponse(UUID id,UUID planId,UUID roadmapId,LocalDate weekStart,int plannedHours,int actualHours,
         int availableHoursNextWeek,Integer difficultyRating,Integer confidenceRating,EnergyBand energyOrCapacityBand,
         List<Blocker> blockers,String notes,Constraint constraint,List<Task> tasks,WeeklyPlanResponse nextPlan,
-        String explanation,Instant createdAt) {
+        String explanation,Instant createdAt,com.mentorai.progress.adaptation.AdaptationResponse adaptation) {
     public record Constraint(ConstraintType type,LocalDate startDate,LocalDate endDate) { }
     public record Task(UUID taskId,String title,Outcome outcome) { }
 }

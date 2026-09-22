@@ -31,7 +31,7 @@ export default async function ProgressPage({ searchParams }: { searchParams: Pro
         {query.saved === "1" && checkIn ? <p className="callout" role="status">Your check-in and next-week plan were saved.</p> : null}
         {checkIn ? <WeeklyCheckInView checkIn={checkIn} /> : <>
           <WeeklyPlanView plan={plan} />
-          <Card><h2>{week < currentWeek ? "Reflect on this earlier week" : "A quick reflection"}</h2><WeeklyCheckInForm key={`${plan.id}-${plan.roadmapRevision}`} plan={plan} /></Card>
+          <Card><h2>{week < currentWeek ? "Reflect on this earlier week" : "A quick reflection"}</h2><WeeklyCheckInForm key={`${plan.id}-${plan.roadmapRevision}-${plan.revision}`} plan={plan} /></Card>
         </>}
       </> : <Card><h2>{week < currentWeek ? "No saved plan for this week" : "Start with a manageable week"}</h2>
         {week < currentWeek ? <p>Only saved weeks can be checked in. Start this week when you’re ready.</p>

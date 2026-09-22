@@ -169,3 +169,22 @@ introduce broader adaptation. See [weekly policy](../progress/WEEKLY_CHECK_INS.m
 - Shared normalized skills support student, career, and job relations.
 - Server Components perform authenticated reads and Server Actions perform UI
   mutations, minimizing client bundles and avoiding duplicated browser fetches.
+## Phase 5 adaptation flow
+
+The progress module owns `AdaptationPolicy` (deterministic recommendation),
+`AdaptationService` (authorization, snapshots and transactional acceptance) and
+the additive V6 audit schema. Weekly check-in submission flushes its progress
+record, then generates a proposal using the updated roadmap and chronologically
+ordered reflections through that week. GET requests only retrieve saved data.
+
+The saved next-week allocation remains the Phase 4 baseline until explicit
+acceptance. Acceptance and check-ins share the owned-roadmap pessimistic lock;
+the service refreshes entities after acquiring it and checks both roadmap and
+weekly-plan versions. This prevents an old form from recording outcomes against
+a revised allocation, including when its task IDs happen to be unchanged.
+
+The `/progress` screen shows before/proposed/accepted values, maintenance mode,
+the learning resume point and blocker questions. Its controlled edit form posts
+through an authenticated Server Action; the backend revalidates all values and
+eligibility. Historical plans that were already checked in cannot be overwritten.
+See [the complete policy](../progress/ADAPTIVE_ROADMAPS.md).

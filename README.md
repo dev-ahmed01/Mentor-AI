@@ -5,7 +5,7 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 4 weekly progress and check-ins. Authentication, normalized
+> Current status: hackathon Phase 5 adaptive roadmap proposals. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, and career-reality pages are implemented. Market and mentor features
@@ -71,7 +71,16 @@ original foundation/career phase numbers above.
 - Explicit roadmap progress updates with atomic saves and stale-revision protection
 - Next-week allocation, including zero-hour weeks, plus private paginated history
 - Additive V5 migration and [weekly check-in policy](docs/progress/WEEKLY_CHECK_INS.md)
-- Existing plans remain saved; adaptive roadmap sequencing follows in Phase 5
+- Existing plans remain saved until an explicit accepted revision
+
+## Implemented in hackathon Phase 5
+
+- Deterministic pacing and sequencing proposals after weekly check-ins
+- Accept or edit revised allocations, with before/proposed/accepted history
+- Maintenance mode for temporary constraints and a preserved learning resume point
+- Repeated-deferral blocker questions and safe capacity limits
+- Ownership, stale-form protection and serialized check-in/acceptance operations
+- Additive V6 migration and [adaptive roadmap policy](docs/progress/ADAPTIVE_ROADMAPS.md)
 
 ## Architecture
 

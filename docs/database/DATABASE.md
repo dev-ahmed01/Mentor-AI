@@ -99,8 +99,18 @@ Prior migrations are unchanged; existing roadmaps and student data are retained.
 
 ## Planned schema growth
 
+Hackathon Phase 5 migration `V6__roadmap_adaptations.sql` adds a version counter
+and NORMAL/MAINTENANCE mode to existing weekly plans, with defaults preserving
+all Phase 4 allocations. `roadmap_adaptations` links the owner, roadmap, trigger
+check-in and target plan. It stores the expected revisions, policy version,
+PENDING/ACCEPTED status, creation/acceptance times and immutable original,
+proposed and accepted JSON snapshots. Database checks enforce status/timestamp
+consistency. Before/proposed snapshots are non-updatable JPA fields. Plan child
+allocations are replaced only under the owned-roadmap lock after stale and
+checked-in checks; explicit flush ordering respects task/position uniqueness.
+
 Later migrations add market observations/snapshots with provenance and freshness;
-jobs and job skills; projects and adaptive roadmap revisions; mentor
+jobs and job skills; projects; mentor
 conversations; learning resources; and vectorized evidence chunks. Vector columns
 supplement relational ownership and filtering; they never replace those controls.
 

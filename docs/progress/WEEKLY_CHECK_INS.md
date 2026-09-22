@@ -71,7 +71,10 @@ upcoming plans. Only the owner can retrieve plans and reflections. A current or
 past unsubmitted week can be opened from history; upcoming allocations are shown
 in the prior check-in's summary.
 
-This phase introduces basic capacity allocation and explicit progress updates.
-Adaptive sequencing, effort recalculation, revision proposals and longer-term
-constraint-based changes belong to Phase 5. There are no streak penalties,
-market claims or AI-generated judgments in this flow.
+Phase 5 adds [reviewable adaptation proposals](ADAPTIVE_ROADMAPS.md) after the
+baseline allocation above. Explicit acceptance can revise an unsubmitted current
+or future allocation; before/proposed/accepted snapshots remain in history.
+Maintenance-mode outcomes describe review activities and do not change roadmap
+completion. Check-ins include the expected weekly-plan revision to reject stale
+forms after accepted edits. There are no streak penalties, market claims or
+AI-generated judgments in this flow.

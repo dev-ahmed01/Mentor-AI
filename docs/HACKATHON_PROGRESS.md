@@ -207,3 +207,40 @@ does not substitute for interactive browser coverage, which remains unverified.
 Next-week allocation uses stated capacity and explicit task outcomes. Broader
 adaptive sequencing and roadmap revision policy remain Phase 5. Previously
 recorded npm dependency-audit findings remain outside this phase.
+## Phase 5 — adaptive roadmap engine (22 September 2026)
+
+- Added deterministic proposals for behind/ahead weeks, repeated deferrals,
+  maintenance during temporary constraints and resumed learning after expiry.
+- Preserved the Phase 4 saved allocation until explicit acceptance; students can
+  accept the suggestion or edit task selection and hours, including a zero-hour week.
+- Added immutable before/proposed/accepted revision history, owner-only APIs,
+  weekly-plan version checks and serialized acceptance/check-in operations.
+- Added maintenance review outcomes that leave learning completion unchanged,
+  plus a visible resume point and gentle blocker questions.
+- Added the review/edit UI and [documented adaptation policy](progress/ADAPTIVE_ROADMAPS.md).
+
+| Check | Result |
+| --- | --- |
+| Initial RED scenarios | Six missing proposal/endpoint failures observed |
+| Stale allocation regression | Reproduced old form accepted with 201; fixed to 409 |
+| Full H2 suite | 58 tests, zero failures/errors |
+| Full PostgreSQL 17.11 suite | 58 tests, zero failures/errors; backend package built |
+| Clean migrations | V1–V6 passed on H2 and PostgreSQL |
+| V5-to-V6 upgrade | Existing profile, skill, roadmap, task, weekly-plan and check-in data preserved |
+| Scenarios | Behind/ahead, repeated deferral, known skills, zero capacity, active/expired constraints passed |
+| Safety and history | Ownership, stale/duplicate/invalid edits, historical targets, pagination and concurrent accept/check-in passed |
+| Independent review | One finding fixed: missed maintenance weeks now resume at reported capacity after expiry; regression observed RED then GREEN |
+| Frontend lint / production build | Passed, including TypeScript and `/progress` |
+| Live API / production SSR | Pending proposal, edited and unedited acceptance, zero-hour plan, duplicate 409, immutable history, profile preservation and maintenance/resume display passed |
+| Graphify AST update | Passed: 1841 nodes / 4297 edges; six SQL files omitted because optional SQL parser is absent |
+| Interactive browser, mobile, keyboard | Not run, per user's API/build-only preference |
+
+The previous local frontend process initially held the standalone build directory
+open; stopping that identified process resolved the build. PostgreSQL was restarted
+after an interruption before upgrade verification. Graphify's interpreter was
+accessible with tool escalation; no interpreter repair or package install was needed.
+
+Old check-in clients may omit `expectedPlanRevision` for an unrevised plan (version
+0); accepted revisions require the refreshed value. Constraints remain active
+through their recorded end date. No AI, market estimates, career changes or effort
+recalculation were introduced. Next: Phase 6 opportunity unlock simulator.

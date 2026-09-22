@@ -309,3 +309,8 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
   .roadmap-overview { grid-template-columns: 1fr; }
   .decision-selector .button { width: 100%; white-space: normal; }
 }
+.adaptation-review { display: grid; gap: 1rem; }
+.adaptation-toggle { display: flex; align-items: center; gap: .65rem; margin-bottom: 1rem; }
+.adaptation-task { display: grid; gap: .75rem; padding-block: .75rem; border-bottom: 1px solid var(--border); }
+.adaptation-task input[type="checkbox"], .adaptation-toggle input { width: auto; }
+.adaptation-task .field { max-width: 28rem; }

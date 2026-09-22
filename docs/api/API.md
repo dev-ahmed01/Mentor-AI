@@ -269,3 +269,44 @@ week is supported; there is no edit/delete endpoint. See
 
 Stack traces and internal exception details are never returned. Authentication
 and access-denied failures use this same contract.
+## Phase 5: adaptive revisions
+
+All routes require a bearer token and owner-scoped lookups. A saved check-in now
+includes optional `adaptation`; weekly plans add `revision` and `mode`.
+`POST /api/check-ins` accepts `expectedPlanRevision` (omission means 0 for original
+Phase 4 plans). Revised plans require their current value. Maintenance check-ins
+record review outcomes without modifying roadmap task states.
+
+- `GET /api/adaptations/{id}`: one saved revision, or 404 for absent/foreign IDs.
+- `GET /api/roadmaps/{id}/adaptations?page=0`: `{items, page, hasNext}`, 20 revisions
+  per page, newest proposal first. Negative pages return 400.
+- `POST /api/adaptations/{id}/accept`: accept or edit a pending proposal.
+
+```json
+{
+  "expectedRoadmapRevision": 2,
+  "expectedPlanRevision": 0,
+  "edit": {
+    "capacityHours": 3,
+    "tasks": [{ "taskId": "<owned-ready-task-uuid>", "plannedHours": 3 }]
+  }
+}
+```
+
+Omit `edit` or send null to accept the proposal unchanged. An edit is a complete
+replacement allocation, with an ordered task list (maximum 20). Integer capacity
+is 0–168; task hours are positive, within the estimate and summed capacity.
+Maintenance edits allow at most two hours and one eligible review task. Duplicate,
+foreign, blocked or over-budget tasks and fractional hours return 400. Stale
+roadmap/plan versions, an already accepted revision, a checked-in target or a past
+target week return 409 without changing data.
+
+The 200 response includes `id`, `checkInId`, `roadmapId`, `planId`, `weekStart`,
+`status`, `policyVersion`, `trigger`, `reason`, `createdAt`, optional `acceptedAt`,
+the original `roadmapRevision`/`planRevision`, `canAccept`, `before`, `proposed`,
+optional `accepted`, optional `resumeTaskId`/`resumeTitle`, `blockerQuestions`
+and editable `candidates`. Each allocation snapshot contains `capacityHours`,
+NORMAL/MAINTENANCE `mode` and task ID/title/planned-hour records. Accepted snapshots
+retain the exact student choice; the proposal is never overwritten.
+
+See [adaptation policy](../progress/ADAPTIVE_ROADMAPS.md) for thresholds and dates.

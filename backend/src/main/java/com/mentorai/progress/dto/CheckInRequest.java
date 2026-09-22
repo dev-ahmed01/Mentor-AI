@@ -10,6 +10,7 @@ import java.util.UUID;
 public record CheckInRequest(
         @NotNull UUID planId,
         @NotNull @Min(0) Long expectedRoadmapRevision,
+        @Min(0) Long expectedPlanRevision,
         @NotNull @Min(0) @Max(168) @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer actualHours,
         @NotNull @Min(0) @Max(168) @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer availableHoursNextWeek,
         @Min(1) @Max(5) @JsonDeserialize(using = StrictIntegerDeserializer.class) Integer difficultyRating,

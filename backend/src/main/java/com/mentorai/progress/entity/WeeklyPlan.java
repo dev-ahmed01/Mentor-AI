@@ -18,6 +18,8 @@ public class WeeklyPlan {
     @Column(name="capacity_hours", nullable=false) private int capacityHours;
     @Column(name="planned_hours", nullable=false) private int plannedHours;
     @Column(name="roadmap_revision", nullable=false) private long roadmapRevision;
+    @Version @Column(nullable=false) private long revision;
+    @Column(nullable=false, length=20) private String mode = "NORMAL";
     @Column(nullable=false, length=500) private String reason;
     @Column(name="created_at", nullable=false, updatable=false) private Instant createdAt;
     @OneToMany(mappedBy="plan", cascade=CascadeType.ALL, orphanRemoval=true) @OrderBy("position ASC")
@@ -30,6 +32,10 @@ public class WeeklyPlan {
         this.reason=reason; this.createdAt=now.truncatedTo(ChronoUnit.MICROS);
     }
     public void addTask(UUID taskId, String title, int hours) { tasks.add(new WeeklyPlanTask(this, tasks.size(), taskId, title, hours)); plannedHours += hours; }
+    public void clearAllocation(int capacity, String mode, String reason) {
+        tasks.clear(); plannedHours=0; capacityHours=capacity; this.mode=mode; this.reason=reason;
+    }
+    public long getRevision(){return revision;} public String getMode(){return mode;}
     public UUID getId(){return id;} public UUID getUserId(){return userId;} public UUID getRoadmapId(){return roadmapId;}
     public String getRoadmapTitle(){return roadmapTitle;} public LocalDate getWeekStart(){return weekStart;}
     public int getCapacityHours(){return capacityHours;} public int getPlannedHours(){return plannedHours;}

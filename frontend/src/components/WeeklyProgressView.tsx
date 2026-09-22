@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdaptationReview } from "@/components/AdaptationReview";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import type { WeeklyCheckIn, WeeklyPlan, WeeklyOutcome } from "@/types/progress";
@@ -13,7 +14,8 @@ export function WeeklyPlanView({ plan, next = false }: { plan: WeeklyPlan; next?
     {plan.tasks.length ? <ul className="weekly-plan-list">{plan.tasks.map((task) => <li key={task.taskId}><span>{task.title}</span><strong>{task.plannedHours} hours</strong></li>)}</ul>
       : <p>{plan.capacityHours === 0 ? "Space to rest or focus on other commitments. No learning tasks are allocated." : "No eligible tasks were allocated. Review your roadmap when you’re ready."}</p>}
     <details className="decision-why"><summary>Why this plan?</summary><p>{plan.reason}</p></details>
-    <p className="field-hint">This is a saved allocation. Roadmap edits do not rewrite its planned hours.</p>
+    {plan.mode === "MAINTENANCE" ? <p className="callout">Maintenance mode: lightweight review. New major learning is paused.</p> : null}
+    <p className="field-hint">This is a saved allocation. Only an accepted revision changes its planned hours.</p>
     <Link href={`/roadmap?id=${plan.roadmapId}`} className="text-link">View this roadmap</Link>
   </Card>;
 }
@@ -29,7 +31,7 @@ export function WeeklyCheckInView({ checkIn }: { checkIn: WeeklyCheckIn }) {
       <div className="card-heading"><h2>Your week, recorded</h2><Badge>Saved</Badge></div>
       <div className="weekly-metrics"><div><span>Planned</span><strong>{checkIn.plannedHours} hours</strong></div><div><span>Actual</span><strong>{checkIn.actualHours} hours</strong></div></div>
       <p>Next-week availability you reported: <strong>{checkIn.availableHoursNextWeek} hours</strong>.</p>
-      {checkIn.availableHoursNextWeek !== checkIn.nextPlan.capacityHours ? <p>The preserved next-week plan has a different saved capacity ({checkIn.nextPlan.capacityHours} hours). Your reported availability is recorded here; the existing plan was not rewritten.</p> : null}
+      {checkIn.availableHoursNextWeek !== checkIn.nextPlan.capacityHours ? <p>The next-week plan has a different saved capacity ({checkIn.nextPlan.capacityHours} hours). Your reported availability stays recorded here; any accepted revision is shown below.</p> : null}
       <p>Energy or capacity: {readable(checkIn.energyOrCapacityBand)}. {checkIn.confidenceRating ? `Topic confidence: ${checkIn.confidenceRating}/5.` : "Topic confidence not rated."} {checkIn.difficultyRating ? `Difficulty: ${checkIn.difficultyRating}/5.` : ""}</p>
       {checkIn.blockers.length ? <p>Reported blockers: {checkIn.blockers.map(readable).join(", ")}.</p> : null}
       {checkIn.constraint ? <p>Temporary constraint: {readable(checkIn.constraint.type)}, {checkIn.constraint.startDate} through {checkIn.constraint.endDate}. No private explanation needed.</p> : null}
@@ -42,6 +44,7 @@ export function WeeklyCheckInView({ checkIn }: { checkIn: WeeklyCheckIn }) {
     <Card><h3>Removed from next week / deferred</h3><OutcomeList checkIn={checkIn} outcomes={["DEFERRED"]} empty="No tasks were explicitly deferred." /><p>Deferred work stays in the roadmap and is excluded from a new next-week allocation. An already saved plan is preserved as recorded.</p>
       <h3>Why the plan changed</h3><p>{checkIn.explanation}</p>
     </Card>
+    {checkIn.adaptation ? <AdaptationReview key={checkIn.adaptation.id + checkIn.adaptation.status} adaptation={checkIn.adaptation} sourceWeek={checkIn.weekStart} /> : null}
     <WeeklyPlanView plan={checkIn.nextPlan} next />
   </div>;
 }

@@ -8,6 +8,7 @@ export type WeeklyPlan = {
   capacityHours: number; plannedHours: number; roadmapRevision: number;
   tasks: { taskId: string; title: string; plannedHours: number }[];
   reason: string; createdAt: string;
+  revision: number; mode: "NORMAL" | "MAINTENANCE";
 };
 export type WeeklyCheckIn = {
   id: string; planId: string; roadmapId: string; weekStart: string;
@@ -17,6 +18,21 @@ export type WeeklyCheckIn = {
   constraint: TemporaryConstraint | null;
   tasks: { taskId: string; title: string; outcome: WeeklyOutcome }[];
   nextPlan: WeeklyPlan; explanation: string; createdAt: string;
+  adaptation?: Adaptation | null;
+};
+
+export type AllocationSnapshot = {
+  capacityHours: number; mode: "NORMAL" | "MAINTENANCE";
+  tasks: { taskId: string; title: string; plannedHours: number }[];
+};
+export type Adaptation = {
+  id: string; checkInId: string; roadmapId: string; planId: string; weekStart: string;
+  status: "PENDING" | "ACCEPTED"; policyVersion: string; trigger: string; reason: string;
+  createdAt: string; acceptedAt?: string | null; roadmapRevision: number; planRevision: number; canAccept: boolean;
+  before: AllocationSnapshot; proposed: AllocationSnapshot; accepted?: AllocationSnapshot | null;
+  resumeTaskId?: string | null; resumeTitle?: string | null;
+  blockerQuestions: { taskId: string; title: string; question: string }[];
+  candidates: { taskId: string; title: string; maxHours: number }[];
 };
 export type ProgressHistory = {
   items: { plan: WeeklyPlan; checkIn: WeeklyCheckIn | null }[];

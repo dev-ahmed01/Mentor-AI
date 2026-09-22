@@ -33,6 +33,8 @@ public class WeeklyProgressService {
     private final RoadmapService roadmaps;
     private final WeeklyAllocationPolicy allocation;
     private final Clock clock;
+    private final com.mentorai.progress.adaptation.AdaptationService adaptations;
+    private final jakarta.persistence.EntityManager entities;
 
     public WeeklyProgressService(
             WeeklyPlanRepository plans,
@@ -40,13 +42,15 @@ public class WeeklyProgressService {
             AuthService auth,
             RoadmapService roadmaps,
             WeeklyAllocationPolicy allocation,
-            Clock clock) {
+            Clock clock, com.mentorai.progress.adaptation.AdaptationService adaptations, jakarta.persistence.EntityManager entities) {
         this.plans = plans;
         this.checkIns = checkIns;
         this.auth = auth;
         this.roadmaps = roadmaps;
         this.allocation = allocation;
         this.clock = clock;
+        this.adaptations = adaptations;
+        this.entities = entities;
     }
 
     @Transactional
@@ -95,19 +99,22 @@ public class WeeklyProgressService {
     public CheckInResponse submit(Authentication authentication,CheckInRequest request){
         UUID owner=auth.requireUser(authentication).getId();
         WeeklyPlan plan=plans.findByIdAndUserId(request.planId(),owner).orElseThrow(()->new ResourceNotFoundException("Weekly plan was not found."));
+        RoadmapResponse before=roadmaps.lockForUpdate(authentication,plan.getRoadmapId(),request.expectedRoadmapRevision());
+        entities.refresh(plan);
+        long expectedPlanRevision=request.expectedPlanRevision()==null?0:request.expectedPlanRevision();
+        if(plan.getRevision()!=expectedPlanRevision)throw new ConflictException("This weekly allocation changed. Refresh it before recording your check-in.");
         if(plan.getWeekStart().isAfter(currentWeek()))throw new ProgressValidationException("Future plans cannot be checked in.");
         if(checkIns.existsByPlanId(plan.getId()))throw new ConflictException("This weekly check-in was already submitted.");
         validateConstraint(request.constraint());
         Map<UUID,CheckInRequest.TaskOutcome> submitted=uniqueOutcomes(request.tasks());
         Set<UUID> planned=plan.getTasks().stream().map(WeeklyPlanTask::getTaskId).collect(Collectors.toSet());
         if(!submitted.keySet().equals(planned))throw new ProgressValidationException("Provide exactly one outcome for every planned task.");
-        RoadmapResponse before=roadmaps.lockForUpdate(authentication,plan.getRoadmapId(),request.expectedRoadmapRevision());
         Map<UUID,RoadmapResponse.Task> roadmapTasks=before.phases().stream().flatMap(p->p.tasks().stream()).collect(Collectors.toMap(RoadmapResponse.Task::id,Function.identity()));
         if(!roadmapTasks.keySet().containsAll(planned))throw new ProgressValidationException("Every outcome task must belong to the plan's roadmap.");
         List<UpdateRoadmapRequest.TaskEdit> edits=new ArrayList<>(); Set<UUID> deferred=new HashSet<>();
         for(WeeklyPlanTask task:plan.getTasks()){
             Outcome outcome=submitted.get(task.getTaskId()).outcome(); RoadmapResponse.Task live=roadmapTasks.get(task.getTaskId());
-            if(outcome==Outcome.COMPLETED||outcome==Outcome.PARTIAL){
+            if(!plan.getMode().equals("MAINTENANCE") && (outcome==Outcome.COMPLETED||outcome==Outcome.PARTIAL)){
                 TaskState state=outcome==Outcome.COMPLETED?TaskState.COMPLETED:TaskState.IN_PROGRESS;
                 edits.add(new UpdateRoadmapRequest.TaskEdit(live.id(),live.title(),live.estimatedHours(),state));
             } else if(outcome==Outcome.DEFERRED) deferred.add(task.getTaskId());
@@ -129,6 +136,7 @@ public class WeeklyProgressService {
         for(WeeklyPlanTask task:plan.getTasks())checkIn.addTask(task.getTaskId(),task.getTitle(),submitted.get(task.getTaskId()).outcome());
         if(request.constraint()!=null)checkIn.setConstraint(request.constraint().type(),request.constraint().startDate(),request.constraint().endDate());
         checkIns.saveAndFlush(checkIn);
+        adaptations.propose(plan,next,checkIn,updated);
         return describeCheckIn(authentication,plan,checkIn);
     }
 
@@ -154,12 +162,12 @@ public class WeeklyProgressService {
     private LocalDate currentWeek(){return LocalDate.now(clock).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));}
     private String normalize(String value){return value==null||value.isBlank()?null:value.strip();}
     private WeeklyPlanResponse describePlan(WeeklyPlan plan,long liveRevision){return new WeeklyPlanResponse(plan.getId(),plan.getRoadmapId(),plan.getRoadmapTitle(),plan.getWeekStart(),
-            plan.getCapacityHours(),plan.getPlannedHours(),liveRevision,plan.getTasks().stream().map(t->new WeeklyPlanResponse.WeeklyTask(t.getTaskId(),t.getTitle(),t.getPlannedHours())).toList(),plan.getReason(),plan.getCreatedAt());}
+            plan.getCapacityHours(),plan.getPlannedHours(),liveRevision,plan.getTasks().stream().map(t->new WeeklyPlanResponse.WeeklyTask(t.getTaskId(),t.getTitle(),t.getPlannedHours())).toList(),plan.getReason(),plan.getCreatedAt(),plan.getRevision(),plan.getMode());}
     private CheckInResponse describeCheckIn(Authentication authentication,WeeklyPlan plan,WeeklyCheckIn checkIn){
         WeeklyPlan next=plans.findByIdAndUserId(checkIn.getNextPlanId(),plan.getUserId()).orElseThrow(()->new ResourceNotFoundException("Next weekly plan was not found."));
         var c=checkIn.getConstraint(); return new CheckInResponse(checkIn.getId(),plan.getId(),plan.getRoadmapId(),plan.getWeekStart(),plan.getPlannedHours(),checkIn.getActualHours(),
                 checkIn.getAvailableHoursNextWeek(),checkIn.getDifficultyRating(),checkIn.getConfidenceRating(),checkIn.getEnergyBand(),List.copyOf(checkIn.getBlockers()),checkIn.getNotes(),
                 c==null?null:new CheckInResponse.Constraint(c.getType(),c.getStartDate(),c.getEndDate()),checkIn.getTasks().stream().map(t->new CheckInResponse.Task(t.getTaskId(),t.getTitle(),t.getOutcome())).toList(),
-                describePlan(next,roadmaps.get(authentication,next.getRoadmapId()).revision()),checkIn.getExplanation(),checkIn.getCreatedAt());
+                describePlan(next,roadmaps.get(authentication,next.getRoadmapId()).revision()),checkIn.getExplanation(),checkIn.getCreatedAt(),adaptations.forCheckIn(authentication,checkIn.getId()));
     }
 }
