@@ -5,14 +5,15 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 9 responsible AI mentor. Authentication, normalized
+> Current status: hackathon Phase 10 career pivoting. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
 > and source-traceable market comparisons are implemented, along with reviewed,
 > private job comparisons and preparation priorities. Market collection is
 > opt-in; sparse or stale samples have no scoring weight. The local mentor is opt-in
-> and explains recorded evidence without changing plans.
+> and explains recorded evidence without changing plans. Career pivots compare
+> learning paths and preserve earlier work when a revised roadmap is accepted.
 
 ## Implemented in Phase 1
 
@@ -250,3 +251,11 @@ attempt cooldown. No credentials or arbitrary source URLs are accepted.
 - Ownership checks, request idempotency, concurrent revision protection and explicit unavailable states
 - Additive V9 migration; [mentor contract and limits](docs/ai/MENTOR_CONTRACT.md)
 - API/build and controlled-provider verification only; real-model quality/performance was not tested
+
+## Implemented in hackathon Phase 10
+
+- `/pivot`: compare a new career against your current roadmap before switching
+- Transferable skills, new requirements, satisfied prerequisites, changed priorities and approximate effort
+- Explicit acceptance creates a revised roadmap; source plans, completed work and weekly history remain available
+- Private frozen audit snapshots, stale-preview checks and idempotent acceptance
+- Additive V10 migration; [career pivot policy](docs/decisions/CAREER_PIVOT_POLICY.md)

@@ -249,3 +249,18 @@ immutable turns through `MentorRepository`. It never invokes a domain mutation.
 Older turns contribute bounded topic memory and four recent excerpts, not full
 history. Provider outages and invalid output persist an explicit unavailable state;
 the deterministic product remains independent of model availability.
+
+## Career pivot flow (Phase 10)
+
+PivotService snapshots an owned current roadmap and the current profile, then
+PivotPolicy combines profile proficiency with documented source-task planning
+credit. LearningDecisionService compares both careers using identical inputs;
+RoadmapGenerator produces the proposed stages and accepted roadmap. PivotRepository
+stores immutable comparison JSON plus acceptance metadata in additive V10.
+
+Acceptance rechecks source revision/currentness, profile fingerprint and both
+priority calculations under owner/source locks. It creates a new linked roadmap
+without modifying the old plan, profile or weekly history. Profile edits and
+ordinary generation use the same owner lock. `/pivot` and `/pivot/[id]` expose
+server-rendered comparisons with explicit confirmation through authenticated
+server actions. No AI/provider call participates in this flow.

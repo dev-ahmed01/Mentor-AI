@@ -12,6 +12,7 @@ export function AppNav({ user }: { user: User }) {
           <Link href="/dashboard">Dashboard</Link>
           <Link href="/careers">Careers</Link>
           <Link href="/roadmap">Roadmap</Link>
+          <Link href="/pivot">Career pivot</Link>
           <Link href="/progress">Weekly check-in</Link>
           <Link href="/simulator">Simulator</Link>
           <Link href="/market">Market evidence</Link>

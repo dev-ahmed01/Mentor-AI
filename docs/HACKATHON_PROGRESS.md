@@ -412,3 +412,46 @@ relevance, latency or quality. Interactive browser, mobile, keyboard and
 no-JavaScript behavior remain unverified. No model was downloaded or run.
 
 Next: Phase 10 career pivoting.
+
+## Phase 10 — career pivoting (23 September 2026)
+
+- Added `/pivot` comparisons and explicit acceptance of a revised current roadmap.
+- Compare transferable skills, new requirements, satisfied prerequisites, skippable
+  targets, changed priorities and illustrative transition effort using existing
+  deterministic priority and roadmap policies.
+- Preserved source roadmaps, completed tasks, profile claims, weekly commitments,
+  check-ins and adaptation history. Each comparison keeps a frozen source snapshot.
+- Additive V10 stores private comparison/acceptance audit records and task credit.
+  Carried proficiency survives lower destination targets; reopening revokes credit
+  independently of historical generation flags, and manually skipping does not restore it.
+- Added owner checks, stale-preview rejection, idempotent acceptance and serialized
+  acceptance versus generation/profile/source edits. No new dependency or AI call.
+- Documented the [career pivot policy](decisions/CAREER_PIVOT_POLICY.md).
+
+| Check | Result |
+| --- | --- |
+| Initial RED scenarios | Five API contracts failed on missing pivot endpoints before implementation |
+| Final H2 suite | 116 tests, zero failures/errors/skips |
+| Final PostgreSQL 17.11 suite | 116 tests, zero failures/errors/skips; backend package built |
+| Clean migration | V1–V10 applied on isolated PostgreSQL database |
+| V9-to-V10 upgrade | All 40 existing table counts and ordered row-content hashes preserved |
+| Independent review | Two Important credit findings reproduced RED and fixed; no Critical/Minor findings |
+| Credit regressions | Stronger proficiency survives round trip; manual re-skip cannot restore revoked credit |
+| Concurrency | Identical and competing accepts; acceptance versus roadmap generation, profile and source changes passed |
+| Frontend lint / TypeScript / production build | Passed; both pivot routes included |
+| Live API / production SSR | Preview, accept, transfer credit, private history, retries, chained pivots and escaped text passed; JavaScript assets served successfully |
+| Saved-data preservation | Source roadmap, profile, weekly plan, check-in history and adaptation responses unchanged after acceptance |
+| JavaScript server-action HTTP protocol | Create preview, reject missing confirmation and accept/redirect passed using installed React encoder |
+| Graphify AST update | Passed: 2578 nodes / 6643 edges / 148 communities |
+| Interactive browser, mobile, keyboard | Not run, per user's API/build-only preference |
+
+Effort remains an illustrative 0/4/8-hour-per-task estimate, not validated mastery
+or hiring readiness. Credit uses the current source roadmap and recorded profile;
+unrelated old roadmaps are not merged. Existing weeks remain on their original
+roadmap, as disclosed before acceptance. No-JavaScript behavior remains unverified.
+
+The interruption stopped temporary services after both suites completed. The
+existing PostgreSQL cluster recovered on restart without reset; migration
+fingerprints were compared before creating new live verification records.
+
+Next: Phase 11 hackathon demo hardening.

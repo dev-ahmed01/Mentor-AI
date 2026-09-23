@@ -26,14 +26,16 @@ public class ProfileService {
     private final AuthService authService;
     private final StudentProfileRepository profileRepository;
     private final SkillRepository skillRepository;
+    private final com.mentorai.auth.repository.UserRepository users;
 
     public ProfileService(
             AuthService authService,
             StudentProfileRepository profileRepository,
-            SkillRepository skillRepository) {
+            SkillRepository skillRepository, com.mentorai.auth.repository.UserRepository users) {
         this.authService = authService;
         this.profileRepository = profileRepository;
         this.skillRepository = skillRepository;
+        this.users = users;
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +47,7 @@ public class ProfileService {
     @Transactional
     public ProfileResponse update(Authentication authentication, UpdateProfileRequest request) {
         User user = authService.requireUser(authentication);
+        users.lockById(user.getId()).orElseThrow();
         StudentProfile profile = requireProfile(user);
         profile.setDegree(clean(request.degree()));
         profile.setYear(request.year());

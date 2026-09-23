@@ -13,7 +13,7 @@ function TaskView({ task, roadmap }: { task: RoadmapTask; roadmap: Roadmap }) {
     {missing.length ? <p className="roadmap-blocker">Foundations to review: {missing.map((item) => item.skillName).join(", ")}. Complete these tasks or review the recorded evidence before starting.</p>
       : <p>{task.prerequisites.length ? "Prerequisites satisfied by recorded skills or completed roadmap tasks." : "No prerequisites recorded in the starter graph."}</p>}
     <details className="decision-why"><summary>Why this order<span className="sr-only"> for {task.skillName}</span></summary><p>{task.orderingReason}</p>
-      {task.prerequisites.length ? <ul>{task.prerequisites.map((item) => <li key={item.taskId}><a href={`#task-${item.taskId}`} className="text-link">{item.skillName}</a>: {item.satisfied ? "satisfied" : "not yet satisfied"}{item.satisfiedAtGeneration ? " by the saved profile" : ""}</li>)}</ul> : null}
+      {task.prerequisites.length ? <ul>{task.prerequisites.map((item) => <li key={item.taskId}><a href={`#task-${item.taskId}`} className="text-link">{item.skillName}</a>: {item.satisfied ? "satisfied" : "not yet satisfied"}{item.satisfiedAtGeneration ? " by recorded planning credit" : ""}</li>)}</ul> : null}
     </details>
     <details className="roadmap-edit"><summary>Edit task<span className="sr-only"> for {task.skillName}</span></summary>
       <RoadmapTaskEditor key={`${task.id}-${roadmap.revision}`} roadmapId={roadmap.id} revision={roadmap.revision} task={{ id: task.id, title: task.title, estimatedHours: task.estimatedHours, state: task.state, ready: task.ready }} />
@@ -30,6 +30,7 @@ export function RoadmapView({ roadmap }: { roadmap: Roadmap }) {
       <div className="card-heading"><span>{roadmap.careerName}</span><Badge>Saved · DEMO DATA</Badge></div>
       <h2>{roadmap.title}</h2>
       <Link href={`/simulator?careerId=${roadmap.careerId}`} className="text-link">Explore what learning a skill could unlock</Link>
+      <p><Link href="/pivot" className="text-link">Compare your current roadmap with another career</Link></p>
       <p>Revision {roadmap.revision} · {roadmap.weeklyHours} hours/week saved with this plan.</p>
       <p>Effort estimates are editable starting points, not validated mastery times. Stages describe learning order, not fixed calendar weeks. Market evidence is unavailable.</p>
       <details className="roadmap-edit"><summary>Rename roadmap</summary><RoadmapTitleEditor key={`${roadmap.id}-${roadmap.revision}`} id={roadmap.id} revision={roadmap.revision} title={roadmap.title} /></details>

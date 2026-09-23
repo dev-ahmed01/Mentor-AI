@@ -427,3 +427,26 @@ unavailable turn, not a fabricated answer. Results include citations/provenance,
 frozen bounded context, timestamp, prompt version, model name, market notice and
 optional fixed navigation suggestion. Disabled AI does not prevent other APIs.
 No mentor endpoint changes profile, roadmap, weekly plan or adaptation state.
+
+## Phase 10: career pivoting
+
+All `/api/pivots` routes require authentication; foreign-owner IDs return 404.
+
+| Method | Path | Contract |
+| --- | --- | --- |
+| GET | `/api/pivots` | Latest 20 owned comparison summaries |
+| POST | `/api/pivots` | `{sourceRoadmapId, targetCareerId}`; save preview, return 201 |
+| GET | `/api/pivots/{id}` | Frozen comparison and acceptance metadata |
+| POST | `/api/pivots/{id}/accept` | `{expectedSourceRevision}`; explicitly create revised roadmap, return 200 |
+
+Preview requires the current owned source roadmap, a different active career and
+recorded weekly hours. Response contains transferable/newly required skills,
+satisfied prerequisites, skippable targets, changed priorities, task-credit
+provenance, illustrative effort and ordered proposed stages. See
+[career pivot policy](../decisions/CAREER_PIVOT_POLICY.md).
+
+Status is PREVIEW or ACCEPTED. The accepted result includes acceptedRoadmapId and
+acceptedAt. Identical acceptance retries return the saved accepted result. A
+changed source/current roadmap, profile or calculation returns 409; missing
+weekly availability returns 422. Existing profile, source tasks, weekly plans,
+check-ins and adaptation records are preserved. No DELETE endpoint is exposed.

@@ -153,8 +153,8 @@ The hackathon Phase 0 baseline is checkpointed. Phase 1 skill dependencies and
 Phase 2 learning priorities, Phase 3 personalized roadmaps and Phase 4 weekly
 progress/check-ins, Phase 5 adaptive roadmap proposals, Phase 6 opportunity
 simulation, Phase 7 market evidence, Phase 8 job-description matching and Phase 9
-responsible mentor are implemented.
+responsible mentor, plus Phase 10 career pivoting, are implemented.
 See [verification results](HACKATHON_PROGRESS.md).
-The next hackathon phase is Phase 10 career pivoting. Preserve old roadmaps and
-history while comparing transferable skills, changed requirements and transition
-priorities. Existing `career-fit-v1` and ownership/evidence contracts remain authoritative.
+The next hackathon phase is Phase 11 demo hardening: a clearly synthetic,
+reproducible student story and reliable 3–5 minute demo. Existing `career-fit-v1`,
+ownership, history preservation and evidence contracts remain authoritative.

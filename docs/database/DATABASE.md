@@ -162,3 +162,25 @@ Message generation holds no database transaction. A short compare-and-swap updat
 and insert commit together, so concurrent results cannot overwrite each other.
 V9 is additive and inserts no fabricated conversations. Rollback can retain both
 tables while running older application code; preserve stored history.
+
+## V10: career pivot audit
+
+`career_pivots` adds owner, source roadmap and destination career foreign keys,
+creation time, immutable comparison JSON and a SHA-256 profile fingerprint. The
+comparison contains the source roadmap revision/snapshot, captured priorities,
+planning credits, effort and proposed stages. Acceptance adds a unique revised
+roadmap foreign key and timestamp together. An owner/time index supports history.
+
+Acceptance atomically saves a new roadmap linked through previous_roadmap_id and
+updates this audit record. Existing rows are not rewritten. Owner-row locks
+serialize acceptance with profile edits and ordinary roadmap generation; the
+source roadmap is additionally locked against concurrent task changes. Rollback
+to previous application code can leave the additive table intact. Do not delete
+historical roadmaps or rewrite applied migrations.
+
+`roadmap_task_credits` stores carried proficiency and revocation separately from
+historical task-generation flags. Accepted pivots retain the full credited level;
+reopening a satisfied task revokes its retained credit transactionally with the
+roadmap edit. Re-skipping cannot undo revocation. Existing rows are not backfilled
+or modified by migration; legacy satisfied tasks use their recorded target as
+the conservative fallback until a credit/revocation entry is created.

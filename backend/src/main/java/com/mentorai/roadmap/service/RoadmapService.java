@@ -36,16 +36,23 @@ public class RoadmapService {
     private final LearningDecisionService decisions;
     private final LearningPriorityPolicy policy;
     private final RoadmapGenerator generator;
+    private final com.mentorai.auth.repository.UserRepository users;
+    private final com.mentorai.roadmap.repository.RoadmapCreditRepository credits;
 
     public RoadmapService(RoadmapRepository roadmaps, AuthService auth, ProfileService profiles,
-                          LearningDecisionService decisions, LearningPriorityPolicy policy, RoadmapGenerator generator) {
+                          LearningDecisionService decisions, LearningPriorityPolicy policy, RoadmapGenerator generator,
+                          com.mentorai.auth.repository.UserRepository users,
+                          com.mentorai.roadmap.repository.RoadmapCreditRepository credits) {
         this.roadmaps = roadmaps; this.auth = auth; this.profiles = profiles;
         this.decisions = decisions; this.policy = policy; this.generator = generator;
+        this.users = users;
+        this.credits = credits;
     }
 
     @Transactional
     public RoadmapResponse create(Authentication authentication, CreateRoadmapRequest request) {
         UUID owner = auth.requireUser(authentication).getId();
+        users.lockById(owner).orElseThrow();
         var priorities = decisions.priorities(request.careerId(), authentication);
         if (priorities.weeklyHours() == null) throw new ProfileIncompleteException("Record weekly learning availability before generating a roadmap.");
         UUID previous = roadmaps.findFirstByUserIdOrderByCreatedAtDescIdDesc(owner).map(Roadmap::getId).orElse(null);
@@ -94,7 +101,12 @@ public class RoadmapService {
         }
         if (edits.isEmpty() && request.title() == null) return describe(roadmap);
         if (request.title() != null) roadmap.setTitle(request.title().strip());
-        for (var edit : edits) byId.get(edit.id()).update(edit.title().strip(), edit.estimatedHours(), edit.state());
+        for (var edit : edits) {
+            RoadmapTask task = byId.get(edit.id());
+            if (task.isSatisfiedAtGeneration() && task.getState() != edit.state() && edit.state() != TaskState.SKIPPED)
+                credits.revoke(task.getId(), task.getTargetProficiency());
+            task.update(edit.title().strip(), edit.estimatedHours(), edit.state());
+        }
         roadmap.touch();
         roadmaps.flush();
         return describe(roadmap);
@@ -115,7 +127,7 @@ public class RoadmapService {
                 .allMatch(entry -> entry.getValue() || states.get(entry.getKey()) == TaskState.COMPLETED);
     }
 
-    private RoadmapResponse describe(Roadmap roadmap) {
+    public RoadmapResponse describe(Roadmap roadmap) {
         List<RoadmapTask> all = tasks(roadmap);
         Map<UUID, TaskState> states = states(all);
         Map<UUID, RoadmapTask> byId = all.stream().collect(Collectors.toMap(RoadmapTask::getId, Function.identity()));
