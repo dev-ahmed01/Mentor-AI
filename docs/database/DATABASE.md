@@ -139,3 +139,14 @@ state contains an uncollected source identifier, never synthetic market evidence
 Rollback is application rollback with collection disabled; keep additive tables
 and Flyway history. The [policy](../market/EVIDENCE_POLICY.md) defines provenance,
 aggregation, eligibility, retention limits and historical reproducibility.
+## Phase 8: private job analyses (V8)
+
+`job_analyses` stores an immutable JSON result per explicit reviewed comparison,
+with UUID, owner UUID, calculation time and version. An owner/ID index supports
+private retrieval; the owner FK cascades only on account deletion. The payload
+freezes original pasted text and extraction, reviewed job fields, relevant profile
+inputs and the full deterministic result. It is never shared market evidence.
+
+V8 adds one table and does not rewrite any prior migration or existing rows.
+No seed job listings or analyses are inserted. Application rollback can leave the
+unused table intact; do not delete historical analyses to roll back code.

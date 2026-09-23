@@ -221,3 +221,17 @@ Existing default career/priority/simulator and roadmap flows remain profile-only
 The Next.js `/market` and saved-comparison pages render bounded typed evidence,
 source links, counts, freshness, limits and scoring explanations without raw HTML.
 See [policy and rollback](../market/EVIDENCE_POLICY.md).
+## Phase 8 job analysis
+
+`/jobs/analyze` calls authenticated extraction through a server action, displays an
+editable draft, and saves only after explicit review. `JobExtractionService`
+recognizes controlled vocabulary and conservative English cues; original text
+remains untrusted and renders as escaped text. `JobMatchingService` resolves
+reviewed names, computes required/preferred weighted coverage and reuses
+`SkillDependencyService` plus `LearningPriorityPolicy` for preparation.
+
+`JobAnalysisService` pins profile inputs and both extraction/review versions in
+an owner-only immutable snapshot through `JobAnalysisRepository`. Result pages
+load saved JSON, never recalculate against a newer profile. No market collection,
+AI, profile/roadmap writes or public job board is involved. Unknown requirements
+and non-skill conditions remain explicitly unassessed.

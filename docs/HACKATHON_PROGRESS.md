@@ -324,3 +324,50 @@ The source remains a limited, Germany-focused sample, not total job demand or
 hiring probability. Collection is disabled by default.
 
 Next: Phase 8 job-description matching.
+
+## Phase 8 — job-description analysis and matching (23 September 2026)
+
+- Added `/jobs/analyze`: pasted text, unsaved extraction draft, editable metadata
+  and requirement lists, explicit review, then a private saved result URL.
+- Added deterministic `job-match-v1` skill coverage with required weight 3 and
+  preferred weight 1; show matched, partial, missing-required, missing-preferred
+  and unassessed requirements. No assessed skills means no numeric indicator.
+- Reused prerequisite and weekly-time gates for preparation priorities, including
+  foundations that block required learning. Existing learning plans are not changed.
+- V8 stores immutable owner-only snapshots of source text, reviewed requirements,
+  profile skill inputs, calculation policy and preparation results.
+- Documented the [job analysis policy](jobs/JOB_ANALYSIS_POLICY.md), API, architecture
+  and additive database migration. No AI, external fetch or public job inventory.
+
+| Check | Result |
+| --- | --- |
+| Initial RED scenarios | Missing endpoint failures observed before implementation |
+| Final H2 suite | 93 tests, zero failures/errors/skips |
+| Final PostgreSQL 17.11 suite | 93 tests, zero failures/errors/skips; backend package built |
+| Clean migration / V7 upgrade | V1–V8 passed; all 37 existing table counts and ordered row-content hashes preserved on V7-to-V8 upgrade |
+| Scoring and privacy | Weighted required/preferred penalties, partial/unknown/empty results, aliases, duplicate precedence, ownership and frozen results passed |
+| Preparation | Missing foundations, required/preferred overlap and missing weekly-time gates passed |
+| Independent review | Three Important findings, all reproduced and fixed; no Critical/Minor findings |
+| Extraction regressions | Mixed sentence cues, unsupported inline sections and contracted negation observed RED then passed; explicit section list behavior preserved |
+| Frontend regression | Failed re-extraction retains prior draft and edited review component; observed RED then passed |
+| Final frontend lint / TypeScript / production build | Passed; both job routes included |
+| Live API / production SSR | Weighted result 43/100 with PARTIAL_ANALYSIS; private immutable results, validation, escaped source text and authenticated pages passed |
+| Saved-data preservation | Live profile, roadmap and weekly-plan responses unchanged after job analysis |
+| JavaScript server-action HTTP protocol | Extraction and save/redirect passed using installed React client encoder |
+| Graphify AST update | Passed: 2277 nodes / 5632 edges / 143 communities |
+| Interactive browser, mobile, keyboard | Not run, per user's API/build-only preference |
+
+Extraction is a limited English catalog-name heuristic and requires correction
+against the full description. Unknown skills and non-skill conditions are not
+scored; even full catalog coverage does not establish job readiness. Profile
+aliases entered as custom skills retain existing identity behavior. Extraction
+is recomputed and frozen at save; reviewed requirements are authoritative.
+
+The final live check resumed after an automatic approval review hit the account
+usage limit. The existing verification database recovered on restart without a
+reset. A manually encoded action request omitted its form fields; switching the
+test harness to the installed React encoder resolved that verification failure
+without changing application code. Interactive browser and no-JavaScript form
+behavior are not established by these HTTP checks.
+
+Next: Phase 9 responsible AI mentor.

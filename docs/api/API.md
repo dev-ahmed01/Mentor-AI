@@ -376,3 +376,31 @@ versioned methodology. Raw source payloads are never exposed.
 Existing `/api/careers/analyze`, `/api/decisions/learning-priorities` and
 `/api/simulator/skill` retain their profile-only behavior. See
 [evidence policy](../market/EVIDENCE_POLICY.md) for formulas and eligibility.
+# Phase 8: pasted job descriptions
+
+All job endpoints require a bearer token. Pasted text is untrusted input; no URL
+is fetched and no AI is used. See [matching policy](../jobs/JOB_ANALYSIS_POLICY.md).
+
+| Method | Path | Result |
+| --- | --- | --- |
+| POST | `/api/jobs/extract` | 200 unsaved draft from `{ "description": "..." }` |
+| POST | `/api/jobs/analyses` | 201 private immutable comparison |
+| GET | `/api/jobs/analyses/{id}` | 200 saved comparison; other owners/missing IDs receive 404 |
+
+The draft includes original description, extraction version, editable title,
+responsibilities, experience, location, technologies, required/preferred/unclassified
+skill-name lists and parser limitations. Extraction does not assert employer proficiency.
+
+Create an analysis with those editable fields (omit extraction version/limitation)
+and `reviewed: true`. All text fields and all three lists are required, but empty
+metadata strings/lists are permitted. Description must be nonblank and at most
+20,000 characters. Each list allows at most 100 nonblank names of 100 characters.
+Malformed/unreviewed/oversized requests receive 400; unauthenticated requests 401.
+
+The saved result contains `id`, `calculatedAt`, `calculationVersion`,
+`originalExtraction`, `reviewedJob`, `profileInputs`, `status`, optional
+`matchIndicator`, `skills`, `priorities`, `preparationVersion` and `methodology`.
+Skill entries distinguish MATCHED, PARTIAL, MISSING and UNASSESSED. Unknown and
+unclassified requirements have weight 0. Required mapped skills weigh 3 and
+preferred 1; no scored requirements means the indicator is omitted. Profile and
+learning plans are never changed. GET returns the frozen result without rescoring.

@@ -322,3 +322,7 @@ h3 { font-size: 1.12rem; letter-spacing: -0.02em; }
 .simulation-table caption { text-align: left; margin-bottom: .5rem; }
 .market-observations { list-style: none; padding: 0; display: grid; gap: 1.5rem; }
 .market-observations > li { border-bottom: 1px solid var(--line); padding-bottom: 1rem; overflow-wrap: anywhere; }
+.job-review-fields { display: grid; gap: 1rem; border: 1px solid var(--line); border-radius: 0.75rem; padding: 1rem; min-width: 0; }
+.job-review-confirm { display: flex; align-items: flex-start; gap: 0.65rem; }
+.job-review-confirm input { width: auto; margin-top: 0.25rem; }
+.job-source-text { white-space: pre-wrap; overflow-wrap: anywhere; }

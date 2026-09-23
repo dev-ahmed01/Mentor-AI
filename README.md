@@ -5,11 +5,12 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 7 market intelligence and evidence. Authentication, normalized
+> Current status: hackathon Phase 8 job-description analysis and matching. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
-> and source-traceable market comparisons are implemented. Market collection is
+> and source-traceable market comparisons are implemented, along with reviewed,
+> private job comparisons and preparation priorities. Market collection is
 > opt-in; sparse or stale samples have no scoring weight. Mentor AI remains unavailable.
 
 ## Implemented in Phase 1
@@ -229,3 +230,12 @@ Collection is off by default. For a permitted local collection, set
 `MARKET_COLLECTION_ENABLED=true` and `MARKET_REFRESH_ON_START=true` before starting
 the backend. It fetches one Arbeitnow page, then respects a persistent six-hour
 attempt cooldown. No credentials or arbitrary source URLs are accepted.
+
+## Implemented in hackathon Phase 8
+
+- `/jobs/analyze`: paste a description, review/correct extracted requirements and save a private comparison
+- Required/preferred weighted skill coverage, partial/missing skills and explicit unassessed requirements
+- Preparation priorities using existing prerequisite and weekly-time gates
+- Immutable owner-only result URLs, with original text, reviewed fields and recorded profile inputs
+- Additive V8 migration; no AI, external fetches or changes to saved learning plans
+- [Job analysis policy](docs/jobs/JOB_ANALYSIS_POLICY.md); action-state regression: `cd frontend` then `node --test tests/job-actions.test.mjs`
