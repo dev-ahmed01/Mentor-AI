@@ -155,6 +155,12 @@ progress/check-ins, Phase 5 adaptive roadmap proposals, Phase 6 opportunity
 simulation, Phase 7 market evidence, Phase 8 job-description matching and Phase 9
 responsible mentor, plus Phase 10 career pivoting, are implemented.
 See [verification results](HACKATHON_PROGRESS.md).
-The next hackathon phase is Phase 11 demo hardening: a clearly synthetic,
-reproducible student story and reliable 3–5 minute demo. Existing `career-fit-v1`,
-ownership, history preservation and evidence contracts remain authoritative.
+The remaining work is one combined Phase 11: demo hardening, final quality,
+security, documentation and deployment. Deliver a clearly synthetic, reproducible
+student story and reliable 3–5 minute demo, complete backend/frontend and migration
+checks, update the project documentation, and verify deployment configuration and
+local-run instructions. Keep the agreed API/build-only verification scope unless
+the user changes it, and record browser checks that remain unverified. Deployment
+follows successful local verification and user authorization. Report the combined
+phase as one checkpoint. Existing `career-fit-v1`, ownership, history preservation
+and evidence contracts remain authoritative.

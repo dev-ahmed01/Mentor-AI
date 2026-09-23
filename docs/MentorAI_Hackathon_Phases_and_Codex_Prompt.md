@@ -939,9 +939,13 @@ Do not delete the old roadmap/history; preserve revision/audit context.
 
 ---
 
-# Phase 11 — Hackathon Demo Hardening
+# Phase 11 — Demo Hardening, Final Quality, Security, Documentation and Deployment
 
-**Goal:** Turn the working system into a memorable 3–5 minute judge experience.
+**Goal:** Deliver a memorable 3–5 minute judge experience and a reproducible, verified project ready for deployment.
+
+This final phase combines the original demo-hardening and final-quality phases.
+Treat the demo, quality/security checks, documentation and deployment preparation
+as one implementation phase with one completion report and verified checkpoint.
 
 ## Locked demo story
 
@@ -984,11 +988,8 @@ Provide deterministic seeded demo state so the live demo does not depend on an e
 
 If Ollama/AI is unavailable, core dashboard/decision/roadmap/simulation should still work and the UI should show a controlled AI-unavailable state.
 
----
-
-# Phase 12 — Final Quality, Security, Documentation, Deployment
-
-**Goal:** Finish with a reproducible, defensible project rather than a demo-only branch.
+The same phase must also complete the following quality, security, documentation
+and deployment checks so the result is reproducible beyond the demo.
 
 ## Backend
 
@@ -1029,6 +1030,15 @@ Document decision formulas/scoring versions and demo-data boundaries.
 ## Deployment
 
 Deploy only after local verification. Keep environment-specific secrets outside Git. Preserve the ability to run locally.
+
+## Completion gate
+
+- The synthetic demo story is reproducible, including controlled unavailable states.
+- Backend tests, clean-database migrations, authorization and prompt-injection checks pass.
+- Frontend lint/build and the agreed UI verification scope are complete; explicitly record any unverified browser, keyboard or mobile behavior.
+- Architecture, API, database, AI and setup documentation match the delivered application.
+- Deployment configuration and local-run instructions are verified. Perform deployment only when authorized and local verification has passed; otherwise report deployment readiness and remaining external steps.
+- Report demo readiness and final verification together before checkpointing this final phase.
 
 ---
 
@@ -1162,8 +1172,7 @@ PHASE ORDER
 8. Job Description Analysis + Job Matching
 9. Responsible AI Mentor using deterministic/evidence context
 10. Career Pivoting
-11. Hackathon Demo Hardening
-12. Final quality/security/docs/deployment verification
+11. Demo Hardening + Final Quality, Security, Documentation and Deployment (one combined final phase)
 
 DO NOT skip directly to later phases because they look more impressive.
 

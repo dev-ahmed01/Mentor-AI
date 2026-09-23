@@ -454,4 +454,6 @@ The interruption stopped temporary services after both suites completed. The
 existing PostgreSQL cluster recovered on restart without reset; migration
 fingerprints were compared before creating new live verification records.
 
-Next: Phase 11 hackathon demo hardening.
+Next: combined Phase 11 — demo hardening, final quality, security, documentation
+and deployment. The user merged the two remaining phases into one final phase;
+its implementation and verification remain pending.
