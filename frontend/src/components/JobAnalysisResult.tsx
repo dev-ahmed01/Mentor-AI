@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/Card";
+import Link from "next/link";
 import type { JobAnalysis, JobSkillMatch } from "@/types/jobs";
 
 export function JobAnalysisResult({ result }: { result: JobAnalysis }) {
@@ -13,6 +14,7 @@ export function JobAnalysisResult({ result }: { result: JobAnalysis }) {
   return <>
     <Card><p className="eyebrow">Private historical comparison</p><h2>Job match indicator: {result.matchIndicator == null ? "Unavailable" : `${result.matchIndicator} / 100`}</h2>
       <p>Catalog skill coverage only. This is not hiring probability or full job readiness.</p>
+      <p><Link href={`/mentor?jobAnalysisId=${result.id}`}>Discuss this saved comparison with the mentor</Link></p>
       <p>{result.status === "INSUFFICIENT_REQUIREMENTS" ? "No classified catalog skills could be assessed. No score or preparation order can be calculated." : result.status === "PARTIAL_ANALYSIS" ? "Some requirements are unassessed and excluded from the score. Review these separately, even when catalog coverage is high." : "The reviewed catalog skills were assessed; experience, location and other job conditions still need your review."}</p>
       <p>Saved {result.calculatedAt.slice(0, 19).replace("T", " ")} UTC using the profile updated {result.profileInputs.updatedAt.slice(0, 19).replace("T", " ")} UTC. Later profile edits do not change this result. Keep this page URL to revisit it.</p>
       <details><summary>How this comparison was calculated</summary><p>{result.methodology}</p><p>Matching: {result.calculationVersion}. Preparation: {result.preparationVersion}.</p></details>

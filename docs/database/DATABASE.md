@@ -150,3 +150,15 @@ inputs and the full deterministic result. It is never shared market evidence.
 V8 adds one table and does not rewrite any prior migration or existing rows.
 No seed job listings or analyses are inserted. Application rollback can leave the
 unused table intact; do not delete historical analyses to roll back code.
+## Phase 9: mentor conversations (V9)
+
+`mentor_conversations` owns the selected career, optional private job analysis,
+revision and bounded topic memory. `mentor_turns` stores immutable JSON snapshots
+with unique `(conversation_id, request_id)` and `(conversation_id, revision)` keys.
+Conversation revision is bounded to 0–60. Account deletion cascades through owned
+conversations to turns; the private job reference is validated by the service.
+
+Message generation holds no database transaction. A short compare-and-swap update
+and insert commit together, so concurrent results cannot overwrite each other.
+V9 is additive and inserts no fabricated conversations. Rollback can retain both
+tables while running older application code; preserve stored history.

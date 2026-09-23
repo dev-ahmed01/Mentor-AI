@@ -5,13 +5,14 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 8 job-description analysis and matching. Authentication, normalized
+> Current status: hackathon Phase 9 responsible AI mentor. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
 > and source-traceable market comparisons are implemented, along with reviewed,
 > private job comparisons and preparation priorities. Market collection is
-> opt-in; sparse or stale samples have no scoring weight. Mentor AI remains unavailable.
+> opt-in; sparse or stale samples have no scoring weight. The local mentor is opt-in
+> and explains recorded evidence without changing plans.
 
 ## Implemented in Phase 1
 
@@ -157,16 +158,17 @@ pinned to Maven 3.9.16.
 
 ## Ollama setup
 
-Ollama is included in Compose for the later AI phase. Pull the configured chat
-and embedding models before enabling AI features:
+Ollama is included in Compose. To enable the mentor, install the configured chat
+model yourself and set `MENTOR_AI_ENABLED=true` before starting the backend:
 
 ```powershell
 docker compose exec ollama ollama pull qwen3:8b
-docker compose exec ollama ollama pull nomic-embed-text
 ```
 
-No Phase 1 endpoint calls Ollama, so profile management remains available while
-the model is stopped.
+Use `OLLAMA_BASE_URL=http://localhost:11434` and `OLLAMA_MODEL=qwen3:8b` (or an
+already installed compatible chat model). This phase uses no embeddings. The
+mentor is disabled by default and never downloads a model. Profile management,
+deterministic decisions and plans remain available while the model is stopped.
 
 ## Tests and checks
 
@@ -239,3 +241,12 @@ attempt cooldown. No credentials or arbitrary source URLs are accepted.
 - Immutable owner-only result URLs, with original text, reviewed fields and recorded profile inputs
 - Additive V8 migration; no AI, external fetches or changes to saved learning plans
 - [Job analysis policy](docs/jobs/JOB_ANALYSIS_POLICY.md); action-state regression: `cd frontend` then `node --test tests/job-actions.test.mjs`
+
+## Implemented in hackathon Phase 9
+
+- Private `/mentor` conversations and immutable cited replies with bounded topic/recent memory
+- Spring AI 1.1.8 / local Ollama adapter, disabled by default, with strict output and transport limits
+- Model selects existing facts; the application supplies deterministic explanations and read-only next steps
+- Ownership checks, request idempotency, concurrent revision protection and explicit unavailable states
+- Additive V9 migration; [mentor contract and limits](docs/ai/MENTOR_CONTRACT.md)
+- API/build and controlled-provider verification only; real-model quality/performance was not tested

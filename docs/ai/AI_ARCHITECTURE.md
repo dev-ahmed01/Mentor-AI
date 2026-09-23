@@ -1,20 +1,19 @@
 # AI Architecture
 
-AI is deliberately not wired into Phase 1. Profile, authentication, browsing,
+Phase 9 adds an opt-in local mentor. Profile, authentication, browsing,
 deterministic calculations, saved roadmaps, and progress must continue to work
 when Ollama is unavailable.
 
-## Planned services
+## Implemented mentor services
 
 ```text
 AiProvider <- OllamaAiProvider (Spring AI)
-EmbeddingService
-RetrievalService
-EvidenceService
+MentorContextService -> MentorOutputValidator -> MentorService
+MentorRepository (owner-only conversations and immutable turns)
 ```
 
-No controller or domain service will call Ollama directly. Chat and embedding
-model IDs come from environment variables. Important prompts are versioned under
+Only the provider calls Ollama. The chat model comes from environment variables.
+Important prompts are versioned under
 `backend/src/main/resources/prompts` rather than embedded as Java strings.
 
 ## Evidence pipeline
@@ -34,8 +33,12 @@ market counts, percentages, salary claims, permissions, or ownership decisions.
 Market statements require stored evidence containing source, URL where allowed,
 collection time, region, data window, sample size, and processing version.
 
-Retrieved content is untrusted data. System policy, trusted application facts,
-and retrieved/job-description text will be separated and prompt-injection test
-fixtures will verify that embedded instructions are ignored. Invalid structured
-outputs may receive one bounded format retry; otherwise the feature returns an
-explicit “AI mentor is currently unavailable” error.
+Retrieved content is untrusted data. The versioned system policy is separate from
+the JSON question/context/history message. Raw job descriptions, raw market
+payloads and account credentials are not sent. Invalid structured output receives
+no retry and becomes an explicit unavailable turn. See the
+[mentor contract](MENTOR_CONTRACT.md) for implemented limits and behavior.
+
+Embedding/retrieval infrastructure is deferred: direct owner-scoped service reads
+already provide the small relevant context this phase needs. No vector store or
+tool execution is introduced.

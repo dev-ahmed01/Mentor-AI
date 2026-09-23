@@ -404,3 +404,26 @@ Skill entries distinguish MATCHED, PARTIAL, MISSING and UNASSESSED. Unknown and
 unclassified requirements have weight 0. Required mapped skills weigh 3 and
 preferred 1; no scored requirements means the indicator is omitted. Profile and
 learning plans are never changed. GET returns the frozen result without rescoring.
+# Phase 9: responsible mentor
+
+All endpoints require authentication. Other owners' conversations/job attachments
+return 404. See [mentor contract](../ai/MENTOR_CONTRACT.md).
+
+| Method | Path | Result |
+| --- | --- | --- |
+| GET | `/api/mentor/status` | Configuration enabled flag/model/prompt version; not a live model-health guarantee |
+| GET | `/api/mentor/conversations` | Latest 20 owned conversations |
+| POST | `/api/mentor/conversations` | 201 with `{careerId, jobAnalysisId?}`; active career and owned optional job required |
+| GET | `/api/mentor/conversations/{id}?page=0` | Conversation and 20 historical turns; pages 0–2, newest page first, turns chronological |
+| POST | `/api/mentor/conversations/{id}/messages` | 201 saved turn for `{requestId, expectedRevision, question}` |
+
+Question: nonblank, maximum 2,000 characters. Request ID is a client UUID; expected
+revision is nonnegative. Identical completed retries return the saved turn.
+Conflicting reuse, stale revision or the 60-turn limit returns 409. Validation
+errors return 400. The API never accepts model settings, source URLs or write tools.
+
+Turn statuses: ANSWERED, UNAVAILABLE, INVALID_OUTPUT. Provider failure is a saved
+unavailable turn, not a fabricated answer. Results include citations/provenance,
+frozen bounded context, timestamp, prompt version, model name, market notice and
+optional fixed navigation suggestion. Disabled AI does not prevent other APIs.
+No mentor endpoint changes profile, roadmap, weekly plan or adaptation state.

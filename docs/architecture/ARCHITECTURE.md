@@ -235,3 +235,17 @@ an owner-only immutable snapshot through `JobAnalysisRepository`. Result pages
 load saved JSON, never recalculate against a newer profile. No market collection,
 AI, profile/roadmap writes or public job board is involved. Unknown requirements
 and non-skill conditions remain explicitly unassessed.
+## Phase 9 responsible mentor
+
+The mentor UI uses authenticated server actions to create owner-scoped conversations
+and send idempotent revision-checked messages. `MentorContextService` reads bounded
+deterministic facts from existing services. `AiProvider` isolates the pinned Spring
+AI Ollama adapter; only local origins are supported. A versioned system prompt
+and separate JSON data message distinguish policy from untrusted text.
+
+`MentorOutputValidator` accepts only existing fact IDs and fixed next-step codes.
+`MentorService` renders those authoritative facts, records provenance and saves
+immutable turns through `MentorRepository`. It never invokes a domain mutation.
+Older turns contribute bounded topic memory and four recent excerpts, not full
+history. Provider outages and invalid output persist an explicit unavailable state;
+the deterministic product remains independent of model availability.

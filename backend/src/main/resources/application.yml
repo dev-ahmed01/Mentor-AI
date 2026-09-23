@@ -33,6 +33,10 @@ management:
       show-details: never
 
 mentorai:
+  ai:
+    enabled: ${MENTOR_AI_ENABLED:false}
+    base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${OLLAMA_MODEL:qwen3:8b}
   market:
     enabled: ${MARKET_COLLECTION_ENABLED:false}
     refresh-on-start: ${MARKET_REFRESH_ON_START:false}

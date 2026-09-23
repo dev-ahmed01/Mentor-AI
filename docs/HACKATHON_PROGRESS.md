@@ -371,3 +371,44 @@ without changing application code. Interactive browser and no-JavaScript form
 behavior are not established by these HTTP checks.
 
 Next: Phase 9 responsible AI mentor.
+
+## Phase 9 — responsible AI mentor (23 September 2026)
+
+- Added private `/mentor` conversations and saved history, with an optional link
+  to an owned job analysis. Each turn freezes its retrieved facts and provenance.
+- Integrated Spring AI 1.1.8 with an opt-in local Ollama provider. The model selects
+  supplied fact IDs and an allowed next step; the application renders authoritative
+  facts and links. Invalid output and provider failures produce saved unavailable
+  turns without fabricated advice or automatic learning-plan changes.
+- Bounded context includes relevant priorities, profile capacity, matching roadmap
+  and check-in state, eligible market evidence and optional saved job results.
+  Raw job descriptions and credentials are excluded. Missing or stale market
+  evidence retains the explicit insufficient-evidence notice.
+- Additive V9 stores owner-only conversations and immutable turns, with request
+  idempotency, optimistic revisions, bounded memory and paginated history.
+- Documented the [mentor contract](ai/MENTOR_CONTRACT.md), configuration, API,
+  architecture, migration and verification limits. AI remains disabled by default.
+
+| Check | Result |
+| --- | --- |
+| Final H2 suite | 105 tests, zero failures/errors/skips |
+| Final PostgreSQL 17.11 suite | 105 tests, zero failures/errors/skips; backend package built |
+| V8-to-V9 upgrade | All 38 existing table counts and ordered row-content hashes preserved |
+| Grounding and privacy | Invalid/injected output, private attachments, frozen facts, stale/fresh provenance, bounded context and memory passed |
+| Provider transport | Actual Spring AI adapter with controlled local HTTP fixtures; bounded response, outage and no-retry behavior passed |
+| Retry and concurrency | Sequential identical retries, stale revisions and simultaneous distinct requests passed |
+| Independent review | No Critical/Important findings; one Minor test gap deferred |
+| Frontend lint / TypeScript / production build | Passed; both mentor routes included |
+| Live API / production SSR | Private history, unavailable turn, retry/conflict handling, frozen context and escaped question text passed |
+| Saved-data preservation | Profile, roadmap and weekly-plan responses unchanged after mentor messages |
+| JavaScript server-action HTTP protocol | Conversation creation and message send/redirect passed using installed React encoder |
+| Graphify AST update | Passed: 2443 nodes / 6152 edges / 152 communities |
+| Real model / interactive browser | Not run, per user's API/build-only preference |
+
+The deferred Minor finding is a missing dedicated regression for simultaneous
+identical-request retries; sequential identical retries and competing distinct
+requests are covered. Controlled provider fixtures do not establish real-model
+relevance, latency or quality. Interactive browser, mobile, keyboard and
+no-JavaScript behavior remain unverified. No model was downloaded or run.
+
+Next: Phase 10 career pivoting.

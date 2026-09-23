@@ -152,9 +152,9 @@ evidence IDs, source, collection time, data window, and sample size.
 The hackathon Phase 0 baseline is checkpointed. Phase 1 skill dependencies and
 Phase 2 learning priorities, Phase 3 personalized roadmaps and Phase 4 weekly
 progress/check-ins, Phase 5 adaptive roadmap proposals, Phase 6 opportunity
-simulation, Phase 7 market evidence and Phase 8 job-description matching are implemented.
+simulation, Phase 7 market evidence, Phase 8 job-description matching and Phase 9
+responsible mentor are implemented.
 See [verification results](HACKATHON_PROGRESS.md).
-The next hackathon phase is Phase 9 responsible AI mentor. The existing
-`career-fit-v1` formula and public APIs remain compatible. The mentor must consume
-the established deterministic results and ownership/evidence contracts; it must
-not invent scores or silently modify a student's plans.
+The next hackathon phase is Phase 10 career pivoting. Preserve old roadmaps and
+history while comparing transferable skills, changed requirements and transition
+priorities. Existing `career-fit-v1` and ownership/evidence contracts remain authoritative.
