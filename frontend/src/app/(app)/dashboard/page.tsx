@@ -3,11 +3,14 @@ import type { Metadata } from "next";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getProfile } from "@/lib/profile";
+import { LearningPriorities } from "@/components/LearningPriorities";
+import { getRoadmap } from "@/lib/roadmaps";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
-export default async function DashboardPage() {
-  const profile = await getProfile();
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ careerId?: string | string[] }> }) {
+  const { careerId } = await searchParams;
+  const [profile, roadmap] = await Promise.all([getProfile(), getRoadmap().catch(() => null)]);
   const hasProfile = Boolean(profile.degree || profile.interests.length || profile.skills.length);
   return (
     <div className="dashboard-page">
@@ -16,24 +19,26 @@ export default async function DashboardPage() {
         <Badge>{hasProfile ? "Profile ready" : "Profile incomplete"}</Badge>
       </div>
 
-      {!hasProfile && (
+      {!hasProfile ? (
         <div className="callout" role="status">
           <div><strong>Start with your profile.</strong><p>Your career analysis needs a reliable starting point.</p></div>
           <Link href="/onboarding" className="button button-primary">Complete onboarding</Link>
         </div>
-      )}
+      ) : null}
+
+      <LearningPriorities careerId={careerId === undefined ? roadmap?.careerId : careerId} />
 
       <div className="dashboard-grid">
         <Card className="dashboard-primary">
-          <div className="card-heading"><span>Current direction</span><Badge>Not calculated yet</Badge></div>
-          <h2>Career analysis comes next</h2>
-          <p>Phase 1 deliberately does not invent a career fit or market signal. Your saved profile will feed documented deterministic scoring and evidence-aware analysis in the next phase.</p>
+          <div className="card-heading"><span>Career intelligence</span><Badge>Calculated</Badge></div>
+          <h2>Compare plausible career directions</h2>
+          <p>Your profile can now be compared with ten controlled career paths. The indicator is deterministic and explicitly excludes unverified market data.</p>
           <div className="priority-block">
-            <span className="eyebrow">Current priority</span>
-            <strong>{hasProfile ? "Review your starting profile" : "Complete onboarding"}</strong>
+            <span className="eyebrow">Recommended next step</span>
+            <strong>{hasProfile ? "Run your career comparison" : "Complete onboarding first"}</strong>
             <p>{profile.skills.length} skills and {profile.interests.length} interests currently recorded.</p>
           </div>
-          <Link href="/profile" className="text-link">Review profile <span aria-hidden="true">→</span></Link>
+          <Link href={hasProfile ? "/careers" : "/onboarding"} className="text-link">{hasProfile ? "Explore careers" : "Complete profile"} <span aria-hidden="true">→</span></Link>
         </Card>
 
         <Card>
@@ -47,10 +52,11 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="roadmap-preview">
-          <div className="card-heading"><span>Product status</span><Badge>Foundation</Badge></div>
-          <h3>No roadmap has been generated</h3>
-          <p>This is intentional: roadmap generation will be added with skill dependencies, validation, and explicit “not yet” priorities.</p>
-          <div className="empty-state">Not implemented in Phase 1</div>
+          <div className="card-heading"><span>Your learning path</span><Badge>Roadmaps available</Badge></div>
+          <h3>Turn priorities into a plan</h3>
+          <p>Create an ordered roadmap, adjust task effort, and record progress at a pace that fits your available time.</p>
+          <Link href="/roadmap" className="text-link">Open or create your roadmap</Link>
+          <p><Link href="/progress" className="text-link">Plan your week or check in</Link></p>
         </Card>
       </div>
     </div>

@@ -5,14 +5,19 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: Phase 1 foundation. Authentication, normalized student
-> profiles, and the responsive profile dashboard are implemented. Career,
-> market, roadmap, and mentor features are intentionally shown as not yet
-> implemented rather than backed by fake data.
+> Current status: combined final Phase 11 demo and release hardening. Authentication, normalized
+> student profiles, a controlled ten-path career catalog, deterministic career
+> comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
+> progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
+> and source-traceable market comparisons are implemented, along with reviewed,
+> private job comparisons and preparation priorities. Market collection is
+> opt-in; sparse or stale samples have no scoring weight. The local mentor is opt-in
+> and explains recorded evidence without changing plans. Career pivots compare
+> learning paths and preserve earlier work when a revised roadmap is accepted.
 
 ## Implemented in Phase 1
 
-- Spring Boot modular-monolith foundation on Java 21
+- Spring Boot modular-monolith foundation on Java 25
 - PostgreSQL schema managed by Flyway
 - Stateless JWT authentication with BCrypt password hashing
 - Register, login, and current-user APIs
@@ -23,6 +28,71 @@ responsible local AI. It recommends and explains; the student decides.
 - Loading, error, empty, mobile, keyboard-focus, and reduced-motion states
 - Backend integration tests, frontend lint/build checks, and pinned Maven wrapper
 
+## Implemented in Phase 2
+
+- Normalized career and career-skill schema with a controlled ten-path catalog
+- Career browse and detail APIs with responsibilities, expectations, risks, and
+  explicit market-evidence boundaries
+- Versioned, deterministic `Career Fit Indicator` based on profile evidence
+- Factor explanations, strengths, prioritized gaps, alternatives, and next steps
+- Responsive career explorer, analysis results, and career-reality UI
+- Flyway migration validation and end-to-end career API/scoring tests
+
+## Implemented in hackathon Phase 1
+
+- Reusable skill prerequisite graph and additive V3 migration
+- Cycle/duplicate/self-edge safeguards and authenticated readiness APIs
+- Deterministic direct/transitive prerequisite checks using recorded proficiency
+- Expandable prerequisite context on career detail pages, labeled `DEMO DATA`
+
+See [verification progress](docs/HACKATHON_PROGRESS.md) for phase gates and
+remaining verification limitations. Hackathon phase numbers differ from the
+original foundation/career phase numbers above.
+
+## Implemented in hackathon Phase 2
+
+- Authenticated, read-only learning-priority API for an explicit target career
+- Required/preferred skill ranking, prerequisite foundations and bottlenecks
+- Learn now / Learn next / Later / Not yet with deterministic reasons
+- Weekly focus limits and explicit handling of missing availability
+- Dashboard career selector, expandable explanations and career-detail links
+- Versioned [decision policy](docs/decision/SCORING.md); no market score or AI dependency
+
+## Implemented in hackathon Phase 3
+
+- Saved, user-owned roadmaps with ordered learning stages and prerequisite tasks
+- Deterministic generation from career priorities, recorded skills and weekly time
+- Next action, weekly focus, later work, completion and ordering explanations
+- Editable titles, effort and task state with prerequisite and revision safeguards
+- Preserved previous plans and additive V4 migration
+- Versioned [generation policy](docs/roadmap/GENERATION.md); no automatic adaptation
+
+## Implemented in hackathon Phase 4
+
+- Saved weekly plans with planned hours, actual hours and task outcomes
+- Short check-in with partial/missed/deferred work, capacity and optional constraints
+- Explicit roadmap progress updates with atomic saves and stale-revision protection
+- Next-week allocation, including zero-hour weeks, plus private paginated history
+- Additive V5 migration and [weekly check-in policy](docs/progress/WEEKLY_CHECK_INS.md)
+- Existing plans remain saved until an explicit accepted revision
+
+## Implemented in hackathon Phase 5
+
+- Deterministic pacing and sequencing proposals after weekly check-ins
+- Accept or edit revised allocations, with before/proposed/accepted history
+- Maintenance mode for temporary constraints and a preserved learning resume point
+- Repeated-deferral blocker questions and safe capacity limits
+- Ownership, stale-form protection and serialized check-in/acceptance operations
+- Additive V6 migration and [adaptive roadmap policy](docs/progress/ADAPTIVE_ROADMAPS.md)
+
+## Implemented in hackathon Phase 6
+
+- Read-only “what if I learn this skill?” simulation for a selected career
+- Before/after required and preferred skill coverage, eligibility and priorities
+- Honest prerequisite caveats, already-known/no-effect states and demo-data labels
+- No profile/roadmap updates, job counts, AI or new schema migration
+- [Simulation policy](docs/simulator/SKILL_SIMULATION.md) and `/simulator` UI
+
 ## Architecture
 
 ```text
@@ -31,7 +101,7 @@ Browser
   -> Spring Boot REST API
   -> PostgreSQL / pgvector
 
-Future AI path:
+Optional AI path (implemented, disabled by default):
 Spring service ports -> Spring AI -> local Ollama
 ```
 
@@ -45,7 +115,7 @@ See [the implementation plan](docs/IMPLEMENTATION_PLAN.md),
 
 ## Prerequisites
 
-- Java 21+
+- Java 25+
 - Node.js 22+ (Node.js 24 is also supported)
 - Docker with Docker Compose, or a local PostgreSQL 17 installation
 - Git
@@ -58,10 +128,10 @@ pinned to Maven 3.9.16.
 1. Copy `.env.example` to `.env` and replace every placeholder. Spring and
    Next.js read environment variables from their process environment; `.env` is
    not committed.
-2. Start PostgreSQL and Ollama:
+2. Start PostgreSQL (Ollama is optional):
 
    ```powershell
-   docker compose --env-file .env up -d postgres ollama
+   docker compose --env-file .env up -d postgres
    ```
 
 3. Export the backend variables in your shell, then run the API:
@@ -72,7 +142,7 @@ pinned to Maven 3.9.16.
    $env:DATABASE_PASSWORD='your-local-password'
    $env:JWT_SECRET='replace-with-at-least-32-random-characters'
    cd backend
-   .\mvnw.cmd spring-boot:run
+   .\mvnw.cmd spring-boot:run '-Dspring-boot.run.jvmArguments=-Duser.timezone=UTC'
    ```
 
 4. In another shell, run the frontend:
@@ -89,16 +159,19 @@ pinned to Maven 3.9.16.
 
 ## Ollama setup
 
-Ollama is included in Compose for the later AI phase. Pull the configured chat
-and embedding models before enabling AI features:
+Ollama is included in an optional Compose profile. Start it with
+`docker compose --env-file .env --profile ai up -d ollama`.
+To enable the mentor, install the configured chat
+model yourself and set `MENTOR_AI_ENABLED=true` before starting the backend:
 
 ```powershell
 docker compose exec ollama ollama pull qwen3:8b
-docker compose exec ollama ollama pull nomic-embed-text
 ```
 
-No Phase 1 endpoint calls Ollama, so profile management remains available while
-the model is stopped.
+Use `OLLAMA_BASE_URL=http://localhost:11434` and `OLLAMA_MODEL=qwen3:8b` (or an
+already installed compatible chat model). This phase uses no embeddings. The
+mentor is disabled by default and never downloads a model. Profile management,
+deterministic decisions and plans remain available while the model is stopped.
 
 ## Tests and checks
 
@@ -109,12 +182,14 @@ cd backend
 cd ..\frontend
 npm run lint
 npm run build
+npm test
 npm audit
 ```
 
 Backend tests use an isolated H2 database in PostgreSQL compatibility mode for
-fast API/security checks. PostgreSQL migration tests will be added with
-Testcontainers as the database domain expands.
+fast API/security checks. Flyway applies and Hibernate validates all current
+migrations in the test suite. The same suite also runs against an isolated
+PostgreSQL database in CI; see the deployment guide for datasource overrides.
 
 ## Environment variables
 
@@ -126,6 +201,7 @@ Testcontainers as the database domain expands.
 | `JWT_EXPIRATION` | ISO-8601 duration; defaults to `PT8H` |
 | `FRONTEND_ORIGIN` | Exact browser origin allowed by backend CORS |
 | `API_URL` | Server-side Next.js backend URL |
+| `DEMO_ENABLED` | Opt-in synthetic preparation for empty authenticated accounts; default false |
 | `NEXT_PUBLIC_API_URL` | Development fallback backend URL |
 | `OLLAMA_BASE_URL` | Ollama endpoint for the AI phase |
 | `OLLAMA_MODEL` | Replaceable chat model identifier |
@@ -133,11 +209,69 @@ Testcontainers as the database domain expands.
 
 ## Roadmap
 
-The next verified phase adds the normalized career catalog and documented
-deterministic Career Fit Indicator. Spring AI/Ollama follows only after career
-and skill-gap calculations are testable without an LLM. Market data, RAG,
-roadmaps, jobs, and adaptive mentoring then build on those foundations.
+Follow [the hackathon phases and Codex prompt](docs/MentorAI_Hackathon_Phases_and_Codex_Prompt.md).
+First verify the existing baseline, then add skill dependencies, deterministic
+learning priorities, roadmaps, weekly check-ins, adaptation, and simulation.
+Market evidence and job matching follow; AI explains the established decisions
+and evidence only after those contracts are stable.
+
+On Windows, use `npm.cmd` if PowerShell blocks `npm.ps1`. The UTC JVM option
+above avoids PostgreSQL rejecting the legacy Windows `Asia/Calcutta` timezone
+alias; it changes only the backend process. If Maven selects an inaccessible
+cache, pass `-Dmaven.repo.local=<your-existing-Maven-repository>` explicitly.
 
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+## Implemented in hackathon Phase 7
+
+- Replaceable, bounded public API ingestion with provenance, validation and deduplication
+- Immutable market snapshots with source, publication window, freshness and sample safeguards
+- `/market` source observations, skill frequencies and explicit evidence limitations
+- Private reproducible career/skill comparisons against a chosen snapshot
+- Default profile-only APIs and saved roadmaps retain their existing behavior
+- Additive V7 migration; [evidence policy and collection setup](docs/market/EVIDENCE_POLICY.md)
+
+Collection is off by default. For a permitted local collection, set
+`MARKET_COLLECTION_ENABLED=true` and `MARKET_REFRESH_ON_START=true` before starting
+the backend. It fetches one Arbeitnow page, then respects a persistent six-hour
+attempt cooldown. No credentials or arbitrary source URLs are accepted.
+
+## Implemented in hackathon Phase 8
+
+- `/jobs/analyze`: paste a description, review/correct extracted requirements and save a private comparison
+- Required/preferred weighted skill coverage, partial/missing skills and explicit unassessed requirements
+- Preparation priorities using existing prerequisite and weekly-time gates
+- Immutable owner-only result URLs, with original text, reviewed fields and recorded profile inputs
+- Additive V8 migration; no AI, external fetches or changes to saved learning plans
+- [Job analysis policy](docs/jobs/JOB_ANALYSIS_POLICY.md); action-state regression: `cd frontend` then `node --test tests/job-actions.test.mjs`
+
+## Implemented in hackathon Phase 9
+
+- Private `/mentor` conversations and immutable cited replies with bounded topic/recent memory
+- Spring AI 1.1.8 / local Ollama adapter, disabled by default, with strict output and transport limits
+- Model selects existing facts; the application supplies deterministic explanations and read-only next steps
+- Ownership checks, request idempotency, concurrent revision protection and explicit unavailable states
+- Additive V9 migration; [mentor contract and limits](docs/ai/MENTOR_CONTRACT.md)
+- API/build and controlled-provider verification only; real-model quality/performance was not tested
+
+## Implemented in hackathon Phase 10
+
+- `/pivot`: compare a new career against your current roadmap before switching
+- Transferable skills, new requirements, satisfied prerequisites, changed priorities and approximate effort
+- Explicit acceptance creates a revised roadmap; source plans, completed work and weekly history remain available
+- Private frozen audit snapshots, stale-preview checks and idempotent acceptance
+- Additive V10 migration; [career pivot policy](docs/decisions/CAREER_PIVOT_POLICY.md)
+
+## Implemented in combined hackathon Phase 11
+
+- Authenticated `/demo` guide, opt-in synthetic persona and repeatable exam scenario
+- Persistent synthetic labels, explicit adaptation review, preserved personal data
+- Mobile navigation, skip link, app loading/error states and bounded API waits
+- Additive V11 migration, non-root Dockerfiles, isolated production Compose and CI
+- Portable seed/smoke scripts and tracked-secret scan; patched frontend dependencies
+- [Demo runbook](docs/demo/DEMO_RUNBOOK.md), [deployment guide](docs/deployment/DEPLOYMENT.md),
+  [security boundaries](docs/SECURITY.md) and [verification evidence](docs/HACKATHON_PROGRESS.md)
+
+No model download is required for the synthetic demo.

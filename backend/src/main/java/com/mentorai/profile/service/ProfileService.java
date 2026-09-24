@@ -26,14 +26,16 @@ public class ProfileService {
     private final AuthService authService;
     private final StudentProfileRepository profileRepository;
     private final SkillRepository skillRepository;
+    private final com.mentorai.auth.repository.UserRepository users;
 
     public ProfileService(
             AuthService authService,
             StudentProfileRepository profileRepository,
-            SkillRepository skillRepository) {
+            SkillRepository skillRepository, com.mentorai.auth.repository.UserRepository users) {
         this.authService = authService;
         this.profileRepository = profileRepository;
         this.skillRepository = skillRepository;
+        this.users = users;
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +47,7 @@ public class ProfileService {
     @Transactional
     public ProfileResponse update(Authentication authentication, UpdateProfileRequest request) {
         User user = authService.requireUser(authentication);
+        users.lockById(user.getId()).orElseThrow();
         StudentProfile profile = requireProfile(user);
         profile.setDegree(clean(request.degree()));
         profile.setYear(request.year());
@@ -62,7 +65,12 @@ public class ProfileService {
         replace(profile.getCurrentProjects(), request.currentProjects());
         replace(profile.getCertifications(), request.certifications());
         replace(profile.getAvoidances(), request.avoidances());
-        profile.replaceSkills(toStudentSkills(profile, request.skills()));
+        List<StudentSkill> replacements = toStudentSkills(profile, request.skills());
+        // Flush orphan removals before inserting replacements for the same unique skill pair.
+        // Both operations remain in this transaction, so a later failure rolls them back together.
+        profile.replaceSkills(List.of());
+        profileRepository.flush();
+        profile.replaceSkills(replacements);
         return ProfileResponse.from(profileRepository.save(profile));
     }
 

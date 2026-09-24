@@ -7,8 +7,8 @@ and delegates domain operations to a single Spring Boot API. PostgreSQL is the
 system of record and will also host pgvector. Ollama is a replaceable local AI
 provider behind Spring AI service interfaces.
 
-Backend packages are organized by domain (`auth`, `profile`, `skills`, and later
-`career`, `market`, `roadmap`, `progress`, `jobs`, `mentor`, `ai`) with shared
+Backend packages are organized by domain (`auth`, `profile`, `skills`, `career`,
+`decision`, `roadmap`, `progress`, and later `market`, `jobs`, `mentor`, `ai`) with shared
 configuration, errors, and security under `common`. Controllers accept DTOs,
 application services own transactions and business rules, repositories only
 handle persistence, and external providers sit behind ports.
@@ -43,7 +43,124 @@ it for backend responses; every private backend route independently verifies it.
 - Retrieved documents and job descriptions will be isolated as untrusted prompt
   content before AI integration.
 
-## Decisions
+## Phase 2 career flow
+
+```text
+Authenticated profile + controlled career catalog
+  -> deterministic factor calculations
+  -> normalization across available profile evidence
+  -> ranked candidates + gaps + alternatives + uncertainties
+  -> Next.js career explorer and reality pages
+```
+
+Career scoring is a pure, versioned service. It has no model or network
+dependency. Phase 2 reserves the configured market weight but excludes it from
+the numerator and normalization because no validated observations exist. Future
+market or AI modules must cross explicit service boundaries and cannot silently
+change `career-fit-v1` results.
+
+## Skill dependency flow (hackathon Phase 1)
+
+```text
+Shared skills + illustrative prerequisite edges
+  -> startup DAG validation
+  -> direct/transitive prerequisite retrieval
+  -> authenticated profile proficiency comparison
+  -> career skill context (native expandable details)
+```
+
+`SkillDependencyGraph` performs cycle detection and deduplicated ancestor
+traversal without database, profile, model, or network dependencies.
+`SkillDependencyService` loads a small graph once per request, resolves the
+authenticated profile through the existing service, and emits typed responses.
+The career batch avoids one frontend request per displayed skill. No graph or
+readiness result is stored in a cross-user cache.
+
+All required ancestors must be recorded at BEGINNER or above. Absent coverage is
+explicit rather than treated as proof of preparation. Existing `career-fit-v1`
+calculations and career response contracts are unchanged. AI and learning-priority
+ranking are not part of this phase.
+
+## Learning decision flow (hackathon Phase 2)
+
+```text
+Explicit career selection + authenticated profile
+  -> career requirements + batched prerequisite foundations
+  -> LearningPriorityPolicy (pure deterministic ordering and capacity gates)
+  -> learning-priorities-v1 with reasons and evidence status
+  -> dashboard Next Best Action (server-rendered GET selector and native details)
+```
+
+`LearningDecisionService` assembles inputs inside a read-only transaction.
+`LearningPriorityPolicy` owns scores and group assignment and has no database,
+network or model dependencies. `SkillDependencyService` reuses Phase 1 readiness
+for both career skills and their foundations. The public Phase 1 batch continues
+to return only career skills. No cross-user decision cache is introduced.
+
+The dashboard's target is carried in `careerId` searchParams, validated against
+the current catalog, and sent through the existing server-only bearer client.
+An invalid selection produces a selection prompt. Decision API failure keeps
+the selector/retry control available. Profile writes remain in the existing
+profile flow. Career scoring and response contracts remain unchanged.
+
+No migration or decision persistence is needed. Market weight stays zero;
+roadmap generation and AI remain later phases. The [policy](../decision/SCORING.md)
+documents the formula, tie-breaking, capacity limits and self-report thresholds.
+
+## Roadmap flow (hackathon Phase 3)
+
+```text
+Authenticated profile + selected career + learning-priorities-v1
+  -> RoadmapGenerator (topological ordering, known-skill skipping, demo effort)
+  -> persisted Roadmap / RoadmapPhase / RoadmapTask aggregate
+  -> derived current stage, next action and bounded weekly focus
+  -> server-rendered roadmap with title/task Server Actions
+```
+
+Generation creates an explicit snapshot with policy versions, profile timestamp
+and saved weekly hours. Subsequent profile changes do not rewrite it. New plans
+preserve old IDs and link to the previous plan. The current plan is the latest
+created, not the most recently edited. Completion never updates profile skills.
+
+`RoadmapService` owns transactions and resolves each resource by ID and caller.
+Updates validate all proposed task states before mutation. Prerequisites use
+saved profile evidence or completed tasks; skipping an unknown foundation does
+not unlock it. Parent optimistic locking covers child edits and returns a safe
+409 on stale saves. Concurrent failed transactions roll back all edits.
+
+The `/roadmap` page exposes empty/loading/error states, current and older plans,
+native stage disclosures and controlled editors that retain input on errors.
+Editor identity includes the roadmap/task ID and revision to reset local state
+when navigating between saved plans. This week is a capacity suggestion, not a
+dated progress ledger. See [generation policy](../roadmap/GENERATION.md).
+
+## Weekly progress flow (hackathon Phase 4)
+
+```text
+Owned roadmap + explicit Start this week
+  -> WeeklyAllocationPolicy (ready tasks + bounded capacity)
+  -> saved WeeklyPlan and task snapshots
+  -> student outcomes, actual time, next capacity and optional constraints
+  -> one transaction: validate -> explicit roadmap edits -> next plan -> check-in
+  -> current reflection, next allocation and private weekly history
+```
+
+`WeeklyProgressService` resolves the authenticated owner and enforces Monday/UTC
+periods, exact task coverage, duplicate prevention and atomic persistence.
+`RoadmapService` retains authority over transitions/prerequisites; check-ins use
+its revision protection. Constraints and capacity ratings record student context
+without inferring sensitive circumstances or changing profile proficiency.
+An injected UTC Clock makes week boundaries and late submissions testable.
+
+The `/progress` page reads current/selected week, reflection and paginated history
+through the server-only bearer client. Controlled form inputs remain after failed
+saves, and a missed-week shortcut records zero hours without shame language.
+Snapshot allocations remain separate from the roadmap's live suggested focus.
+An already saved next-week plan is preserved on late submissions; the UI shows
+both reported availability and saved capacity when they differ. Phase 5 will
+introduce broader adaptation. See [weekly policy](../progress/WEEKLY_CHECK_INS.md).
+
+## Architecture decisions
 
 - Modular monolith over microservices keeps local development understandable.
 - Stateless bearer authentication supports a separate Next.js client while the
@@ -52,3 +169,110 @@ it for backend responses; every private backend route independently verifies it.
 - Shared normalized skills support student, career, and job relations.
 - Server Components perform authenticated reads and Server Actions perform UI
   mutations, minimizing client bundles and avoiding duplicated browser fetches.
+## Phase 5 adaptation flow
+
+The progress module owns `AdaptationPolicy` (deterministic recommendation),
+`AdaptationService` (authorization, snapshots and transactional acceptance) and
+the additive V6 audit schema. Weekly check-in submission flushes its progress
+record, then generates a proposal using the updated roadmap and chronologically
+ordered reflections through that week. GET requests only retrieve saved data.
+
+The saved next-week allocation remains the Phase 4 baseline until explicit
+acceptance. Acceptance and check-ins share the owned-roadmap pessimistic lock;
+the service refreshes entities after acquiring it and checks both roadmap and
+weekly-plan versions. This prevents an old form from recording outcomes against
+a revised allocation, including when its task IDs happen to be unchanged.
+
+The `/progress` screen shows before/proposed/accepted values, maintenance mode,
+the learning resume point and blocker questions. Its controlled edit form posts
+through an authenticated Server Action; the backend revalidates all values and
+eligibility. Historical plans that were already checked in cannot be overwritten.
+See [the complete policy](../progress/ADAPTIVE_ROADMAPS.md).
+## Phase 6 simulation flow
+
+The simulator module calculates a transient before/after view from one recorded
+profile and one active career. `SkillSimulationService` creates an immutable
+proficiency map plus a hypothetical copy, then calls the explicit-map overloads
+in `LearningDecisionService` and `SkillDependencyService`. Existing authenticated
+calculation methods delegate to the same code, preserving policy behavior.
+
+Only the selected skill is raised to at least INTERMEDIATE. No entity is changed
+or saved, and the module has no dependency on roadmap/progress mutation services.
+The response retains missing-ancestor context and internal demo-data labels.
+The frontend authenticates its calculation Server Action and renders transient
+before/after state; changing selections discards the old preview. No persistence,
+cache invalidation, AI provider or market ingestion is introduced in this phase.
+## Phase 7 evidence flow
+
+An optional `MarketCollector` calls replaceable `MarketDataProvider` through
+`MarketIngestionService`. Arbeitnow's fixed public API is the initial adapter;
+student requests never trigger provider traffic. A persisted attempt claim
+enforces cooldown across restarts/instances. HTTP bounds, validation and
+normalization precede transactional immutable observation/snapshot writes.
+
+`MarketNormalizationService` extracts conservative skill mentions from untrusted
+source text; `MarketAnalyticsService` builds bounded career samples with full
+provenance and eligibility gates. `MarketRepository` uses the existing managed
+JDBC datasource and Flyway tables alongside JPA catalog/profile reads.
+
+`MarketDecisionService` evaluates an explicit snapshot, reuses profile scoring
+and optional learning-priority bonuses, and saves a private immutable result.
+Existing default career/priority/simulator and roadmap flows remain profile-only.
+The Next.js `/market` and saved-comparison pages render bounded typed evidence,
+source links, counts, freshness, limits and scoring explanations without raw HTML.
+See [policy and rollback](../market/EVIDENCE_POLICY.md).
+## Phase 8 job analysis
+
+`/jobs/analyze` calls authenticated extraction through a server action, displays an
+editable draft, and saves only after explicit review. `JobExtractionService`
+recognizes controlled vocabulary and conservative English cues; original text
+remains untrusted and renders as escaped text. `JobMatchingService` resolves
+reviewed names, computes required/preferred weighted coverage and reuses
+`SkillDependencyService` plus `LearningPriorityPolicy` for preparation.
+
+`JobAnalysisService` pins profile inputs and both extraction/review versions in
+an owner-only immutable snapshot through `JobAnalysisRepository`. Result pages
+load saved JSON, never recalculate against a newer profile. No market collection,
+AI, profile/roadmap writes or public job board is involved. Unknown requirements
+and non-skill conditions remain explicitly unassessed.
+## Phase 9 responsible mentor
+
+The mentor UI uses authenticated server actions to create owner-scoped conversations
+and send idempotent revision-checked messages. `MentorContextService` reads bounded
+deterministic facts from existing services. `AiProvider` isolates the pinned Spring
+AI Ollama adapter; only local origins are supported. A versioned system prompt
+and separate JSON data message distinguish policy from untrusted text.
+
+`MentorOutputValidator` accepts only existing fact IDs and fixed next-step codes.
+`MentorService` renders those authoritative facts, records provenance and saves
+immutable turns through `MentorRepository`. It never invokes a domain mutation.
+Older turns contribute bounded topic memory and four recent excerpts, not full
+history. Provider outages and invalid output persist an explicit unavailable state;
+the deterministic product remains independent of model availability.
+
+## Career pivot flow (Phase 10)
+
+PivotService snapshots an owned current roadmap and the current profile, then
+PivotPolicy combines profile proficiency with documented source-task planning
+credit. LearningDecisionService compares both careers using identical inputs;
+RoadmapGenerator produces the proposed stages and accepted roadmap. PivotRepository
+stores immutable comparison JSON plus acceptance metadata in additive V10.
+
+Acceptance rechecks source revision/currentness, profile fingerprint and both
+priority calculations under owner/source locks. It creates a new linked roadmap
+without modifying the old plan, profile or weekly history. Profile edits and
+ordinary generation use the same owner lock. `/pivot` and `/pivot/[id]` expose
+server-rendered comparisons with explicit confirmation through authenticated
+server actions. No AI/provider call participates in this flow.
+## Final demo and release layer (Phase 11)
+
+DemoService composes existing profile, roadmap and weekly-progress services under
+the owner lock; it adds no alternate scoring, adaptation or authentication path.
+V11 retains owner-scoped synthetic provenance. Server-rendered `/demo` and typed
+server actions require explicit confirmations; the app shell always checks for
+the synthetic marker. App error/loading states and native-details navigation
+share the existing styles and auth shell.
+
+Non-root Java/Node images, isolated PostgreSQL Compose and the CI workflow provide
+release packaging. API and database ports are private; an external HTTPS proxy
+serves the frontend. See [deployment configuration and limits](../deployment/DEPLOYMENT.md).

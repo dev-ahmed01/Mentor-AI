@@ -1,0 +1,58 @@
+name: mentorai
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mentorai
+      POSTGRES_USER: mentorai
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?Set a unique database password}
+    volumes:
+      - production-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mentorai -d mentorai"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [database]
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/mentorai
+      DATABASE_USERNAME: mentorai
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:?Set a unique database password}
+      JWT_SECRET: ${JWT_SECRET:?Set a random JWT secret of at least 32 bytes}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN:?Set the public HTTPS frontend origin}
+      DEMO_ENABLED: ${DEMO_ENABLED:-false}
+      MENTOR_AI_ENABLED: "false"
+      MARKET_COLLECTION_ENABLED: "false"
+      MARKET_REFRESH_ON_START: "false"
+    depends_on:
+      postgres: { condition: service_healthy }
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [database, application]
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    environment:
+      API_URL: http://backend:8080
+    ports:
+      - "${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-3000}:3000"
+    depends_on:
+      backend: { condition: service_healthy }
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [application]
+
+networks:
+  database:
+    internal: true
+  application:
+volumes:
+  production-postgres:
