@@ -5,7 +5,7 @@ designed to connect a student’s profile, interests, goals, skills, constraints
 and progress with deterministic analysis, traceable market evidence, and
 responsible local AI. It recommends and explains; the student decides.
 
-> Current status: hackathon Phase 10 career pivoting. Authentication, normalized
+> Current status: combined final Phase 11 demo and release hardening. Authentication, normalized
 > student profiles, a controlled ten-path career catalog, deterministic career
 > comparison, skill gaps, prerequisites, learning priorities, saved roadmaps, task
 > progress, weekly plans, life-aware check-ins, adaptive roadmaps, skill simulation
@@ -101,7 +101,7 @@ Browser
   -> Spring Boot REST API
   -> PostgreSQL / pgvector
 
-Future AI path:
+Optional AI path (implemented, disabled by default):
 Spring service ports -> Spring AI -> local Ollama
 ```
 
@@ -128,10 +128,10 @@ pinned to Maven 3.9.16.
 1. Copy `.env.example` to `.env` and replace every placeholder. Spring and
    Next.js read environment variables from their process environment; `.env` is
    not committed.
-2. Start PostgreSQL and Ollama:
+2. Start PostgreSQL (Ollama is optional):
 
    ```powershell
-   docker compose --env-file .env up -d postgres ollama
+   docker compose --env-file .env up -d postgres
    ```
 
 3. Export the backend variables in your shell, then run the API:
@@ -159,7 +159,9 @@ pinned to Maven 3.9.16.
 
 ## Ollama setup
 
-Ollama is included in Compose. To enable the mentor, install the configured chat
+Ollama is included in an optional Compose profile. Start it with
+`docker compose --env-file .env --profile ai up -d ollama`.
+To enable the mentor, install the configured chat
 model yourself and set `MENTOR_AI_ENABLED=true` before starting the backend:
 
 ```powershell
@@ -180,13 +182,14 @@ cd backend
 cd ..\frontend
 npm run lint
 npm run build
+npm test
 npm audit
 ```
 
 Backend tests use an isolated H2 database in PostgreSQL compatibility mode for
 fast API/security checks. Flyway applies and Hibernate validates all current
-migrations in the test suite; a real PostgreSQL Testcontainers suite remains a
-future hardening step.
+migrations in the test suite. The same suite also runs against an isolated
+PostgreSQL database in CI; see the deployment guide for datasource overrides.
 
 ## Environment variables
 
@@ -198,6 +201,7 @@ future hardening step.
 | `JWT_EXPIRATION` | ISO-8601 duration; defaults to `PT8H` |
 | `FRONTEND_ORIGIN` | Exact browser origin allowed by backend CORS |
 | `API_URL` | Server-side Next.js backend URL |
+| `DEMO_ENABLED` | Opt-in synthetic preparation for empty authenticated accounts; default false |
 | `NEXT_PUBLIC_API_URL` | Development fallback backend URL |
 | `OLLAMA_BASE_URL` | Ollama endpoint for the AI phase |
 | `OLLAMA_MODEL` | Replaceable chat model identifier |
@@ -259,3 +263,15 @@ attempt cooldown. No credentials or arbitrary source URLs are accepted.
 - Explicit acceptance creates a revised roadmap; source plans, completed work and weekly history remain available
 - Private frozen audit snapshots, stale-preview checks and idempotent acceptance
 - Additive V10 migration; [career pivot policy](docs/decisions/CAREER_PIVOT_POLICY.md)
+
+## Implemented in combined hackathon Phase 11
+
+- Authenticated `/demo` guide, opt-in synthetic persona and repeatable exam scenario
+- Persistent synthetic labels, explicit adaptation review, preserved personal data
+- Mobile navigation, skip link, app loading/error states and bounded API waits
+- Additive V11 migration, non-root Dockerfiles, isolated production Compose and CI
+- Portable seed/smoke scripts and tracked-secret scan; patched frontend dependencies
+- [Demo runbook](docs/demo/DEMO_RUNBOOK.md), [deployment guide](docs/deployment/DEPLOYMENT.md),
+  [security boundaries](docs/SECURITY.md) and [verification evidence](docs/HACKATHON_PROGRESS.md)
+
+No model download is required for the synthetic demo.

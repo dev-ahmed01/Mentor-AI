@@ -965,7 +965,7 @@ Demo sequence:
 1. Show profile/context.
 2. Show career fit/reality check.
 3. Show `LEARN_NOW / LATER / NOT_YET`.
-4. Ask why Kubernetes is `NOT_YET`.
+4. Ask why Spring Boot is `NOT_YET` in the delivered Backend graph. Kubernetes is outside this modeled career graph; explain that catalog limit rather than inventing its priority.
 5. Simulate learning Spring Boot and show what it unlocks.
 6. Show weekly plan.
 7. Simulate an exam week / reduced capacity.

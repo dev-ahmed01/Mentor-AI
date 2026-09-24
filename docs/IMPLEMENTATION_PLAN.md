@@ -147,7 +147,7 @@ evidence IDs, source, collection time, data window, and sample size.
 - AI evaluation fixtures: plausible alternatives, weak-foundation reality checks,
   deterministic job gaps, insufficient evidence, and malicious retrieved text.
 
-## Immediate next step
+## Final delivery status
 
 The hackathon Phase 0 baseline is checkpointed. Phase 1 skill dependencies and
 Phase 2 learning priorities, Phase 3 personalized roadmaps and Phase 4 weekly
@@ -155,12 +155,17 @@ progress/check-ins, Phase 5 adaptive roadmap proposals, Phase 6 opportunity
 simulation, Phase 7 market evidence, Phase 8 job-description matching and Phase 9
 responsible mentor, plus Phase 10 career pivoting, are implemented.
 See [verification results](HACKATHON_PROGRESS.md).
-The remaining work is one combined Phase 11: demo hardening, final quality,
-security, documentation and deployment. Deliver a clearly synthetic, reproducible
-student story and reliable 3–5 minute demo, complete backend/frontend and migration
-checks, update the project documentation, and verify deployment configuration and
-local-run instructions. Keep the agreed API/build-only verification scope unless
-the user changes it, and record browser checks that remain unverified. Deployment
-follows successful local verification and user authorization. Report the combined
-phase as one checkpoint. Existing `career-fit-v1`, ownership, history preservation
-and evidence contracts remain authoritative.
+Combined Phase 11 is implemented: opt-in synthetic demo, exam/adaptation story,
+navigation and error hardening, security checks, release scripts, Docker/Compose,
+CI and documentation. Final verification passed 124 backend tests on each of H2
+and PostgreSQL, four frontend action tests, lint/build, production HTTP/server
+actions and V10-to-V11 preservation of all 42 pre-existing app tables.
+
+The [demo runbook](demo/DEMO_RUNBOOK.md) and [deployment guide](deployment/DEPLOYMENT.md)
+describe reproducible operation. Docker/container execution, remote CI, public
+HTTPS deployment and interactive browser/mobile/keyboard checks remain external
+verification steps; no real model run was requested. An old temporary PostgreSQL
+cluster had missing system files; its readable app tables were cloned and verified
+in a separate cluster without repairing or resetting the original. See the full
+[verification report](HACKATHON_PROGRESS.md). Existing `career-fit-v1`, ownership,
+history preservation and evidence contracts remain authoritative.

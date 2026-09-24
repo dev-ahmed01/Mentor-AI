@@ -1,7 +1,8 @@
 # Database
 
-PostgreSQL is the production datastore. The Compose image includes pgvector so
-semantic retrieval can be added without a separate database. Flyway migrations
+PostgreSQL is the production datastore. Development Compose includes pgvector;
+production Compose uses plain PostgreSQL 17 because no vector feature is currently
+required. Semantic retrieval can later be added without another database. Flyway migrations
 under `backend/src/main/resources/db/migration` are authoritative; production
 Hibernate uses `ddl-auto=validate`.
 
@@ -184,3 +185,11 @@ reopening a satisfied task revokes its retained credit transactionally with the
 roadmap edit. Re-skipping cannot undo revocation. Existing rows are not backfilled
 or modified by migration; legacy satisfied tasks use their recorded target as
 the conservative fallback until a credit/revocation entry is created.
+## Synthetic demo provenance (V11)
+
+`demo_runs` records a unique owner, seeded roadmap/plan IDs, UTC week, initial
+revisions, scenario version, creation time and optional unique exam check-in ID.
+Foreign keys retain provenance; owner locks serialize preparation and retries.
+The additive migration does not rewrite existing records. Fixture records are
+created only by the opt-in authenticated service, never by a migration. There is
+no reset/delete operation. Disabling preparation retains provenance and labels.

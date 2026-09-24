@@ -4,12 +4,13 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { getProfile } from "@/lib/profile";
 import { LearningPriorities } from "@/components/LearningPriorities";
+import { getRoadmap } from "@/lib/roadmaps";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ careerId?: string | string[] }> }) {
   const { careerId } = await searchParams;
-  const profile = await getProfile();
+  const [profile, roadmap] = await Promise.all([getProfile(), getRoadmap().catch(() => null)]);
   const hasProfile = Boolean(profile.degree || profile.interests.length || profile.skills.length);
   return (
     <div className="dashboard-page">
@@ -25,11 +26,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         </div>
       ) : null}
 
-      <LearningPriorities careerId={careerId} />
+      <LearningPriorities careerId={careerId === undefined ? roadmap?.careerId : careerId} />
 
       <div className="dashboard-grid">
         <Card className="dashboard-primary">
-          <div className="card-heading"><span>Career intelligence</span><Badge>Phase 2 available</Badge></div>
+          <div className="card-heading"><span>Career intelligence</span><Badge>Calculated</Badge></div>
           <h2>Compare plausible career directions</h2>
           <p>Your profile can now be compared with ten controlled career paths. The indicator is deterministic and explicitly excludes unverified market data.</p>
           <div className="priority-block">

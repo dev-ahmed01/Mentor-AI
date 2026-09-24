@@ -450,3 +450,17 @@ acceptedAt. Identical acceptance retries return the saved accepted result. A
 changed source/current roadmap, profile or calculation returns 409; missing
 weekly availability returns 422. Existing profile, source tasks, weekly plans,
 check-ins and adaptation records are preserved. No DELETE endpoint is exposed.
+## Synthetic demo (combined Phase 11)
+
+All routes require the current bearer token. `GET /api/demo` returns `enabled`
+and the owner's optional `run`; it continues to disclose synthetic status when
+setup is disabled. `POST /api/demo/start` requires `{ "confirmSynthetic": true }`
+and an empty account. It returns the same run on retries, rejects existing
+personal data/history with 409, and is unavailable with 404 unless DEMO_ENABLED.
+
+`POST /api/demo/exam` requires `expectedRoadmapRevision` and `expectedPlanRevision`
+from the seeded run. It records a normal check-in and pending adaptation, returns
+`run` plus `checkIn`, and retries return the saved check-in. Changed source/week,
+stale revisions or a manually submitted check-in cannot be overwritten. Accept
+the adaptation through the existing explicit acceptance endpoint. No reset route
+or alternate authentication path exists. See [the demo runbook](../demo/DEMO_RUNBOOK.md).

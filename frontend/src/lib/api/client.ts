@@ -29,6 +29,7 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
       ...options,
       headers,
       cache: "no-store",
+      signal: options.signal ?? AbortSignal.timeout(60_000),
     });
   } catch {
     throw new ApiClientError({

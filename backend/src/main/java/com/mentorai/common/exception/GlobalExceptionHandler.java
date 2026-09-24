@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    ResponseEntity<ApiError> handleMissingRoute(HttpServletRequest request) {
+        return response(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "The requested resource was not found.", Map.of(), request);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     ResponseEntity<ApiError> handleMalformedBody(HttpServletRequest request) {
         return response(HttpStatus.BAD_REQUEST, "VALIDATION_FAILED", "The request body contains invalid or missing values.", Map.of(), request);

@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: ${DATABASE_USERNAME:-mentorai}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-mentorai-local-only}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - mentorai-postgres:/var/lib/postgresql/data
     healthcheck:
@@ -16,9 +16,10 @@ services:
       retries: 10
 
   ollama:
+    profiles: [ai]
     image: ollama/ollama:latest
     ports:
-      - "11434:11434"
+      - "127.0.0.1:11434:11434"
     volumes:
       - mentorai-ollama:/root/.ollama
 

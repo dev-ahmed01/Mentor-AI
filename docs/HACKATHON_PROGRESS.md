@@ -454,6 +454,59 @@ The interruption stopped temporary services after both suites completed. The
 existing PostgreSQL cluster recovered on restart without reset; migration
 fingerprints were compared before creating new live verification records.
 
-Next: combined Phase 11 — demo hardening, final quality, security, documentation
-and deployment. The user merged the two remaining phases into one final phase;
-its implementation and verification remain pending.
+The user merged the remaining demo and release phases into combined Phase 11,
+delivered below.
+
+## Combined Phase 11 — demo and release hardening (24 September 2026)
+
+- Opt-in authenticated demo preparation for an unused account, with persistent
+  synthetic provenance and no destructive reset. Duplicate/concurrent requests
+  reuse the same fixture; populated accounts and existing history are rejected.
+- BCA persona, Backend roadmap, eight-hour plan and synthetic completed Git work.
+  Explicit exam shortcut creates a normal two-hour check-in and pending maintenance
+  proposal; acceptance remains a separate student decision. Stale weeks/revisions,
+  replacement roadmaps and manual check-ins cannot be silently overwritten.
+- `/demo` guides a 3–5 minute story, explaining Spring Boot prerequisites, read-only
+  simulation and unavailable AI honestly. Kubernetes is outside the delivered
+  Backend priority graph. Navigation remains available at small breakpoints;
+  skip link, app loading/error states and a persistent synthetic banner are added.
+- Authenticated missing routes return sanitized 404s; CORS/health tests, default
+  frontend request timeout, patched dependencies and tracked-secret scan added.
+- Non-root Dockerfiles, production Compose, CI, portable seed/smoke scripts,
+  [demo runbook](demo/DEMO_RUNBOOK.md), [deployment guide](deployment/DEPLOYMENT.md)
+  and [security boundaries](SECURITY.md) supplied. AI/market access remain opt-in.
+
+| Verification | Result |
+| --- | --- |
+| Backend H2 / Java 25 | 124 tests; zero failures, errors or skips; package built |
+| Backend PostgreSQL 17.11 | 124 tests; zero failures, errors or skips; V1–V11 clean migration |
+| V10-to-V11 upgrade | All 42 app table row counts and ordered content hashes unchanged in isolated clone |
+| Demo safety | Disabled/auth/ownership, unused-account, duplicate/concurrent, stale source/week and manual-check-in preservation checks passed |
+| Frontend action tests | 4 passed |
+| Frontend lint / TypeScript / production build | Passed on Next.js 16.3.6 |
+| Dependency audit | Zero findings in full npm audit, including development dependencies |
+| Tracked-secret guard | Passed across 344 tracked files; no environment files or configured credential signatures found |
+| Production API / SSR / assets | Synthetic seed/retry, Spring Boot priority, simulation preservation, AI unavailable, exam/acceptance, saved completion and private resources passed |
+| Server-action HTTP protocol | Missing confirmations reject writes; seed and exam redirect; adaptation remains pending |
+| Portable CLI | Fresh seed and repeated login/seed returned the same roadmap |
+| Release config | YAML parsed; script syntax checked; Docker build inputs reviewed |
+| Independent review | Mobile dropdown anchoring corrected; environment recreation instructions clarified; no Critical finding |
+| Graphify AST update | 2701 nodes / 7005 edges / 166 communities |
+| Docker images / remote CI / public deployment | Not executed: Docker unavailable locally; no deployment target or remote run supplied |
+| Interactive browser / mobile / keyboard / no-JS | Not run, per API/build-only scope |
+| Real model | Not run, per user preference |
+
+The interrupted old temporary PostgreSQL installation had missing template and
+role-catalog files; normal `pg_dump` failed. It was not repaired, reset or migrated.
+All 42 application tables remained readable, so they were copied into a newly
+created V10 schema in a separate PostgreSQL cluster. Before/after clone hashes
+matched, and V11 then preserved every hash before live smoke writes. This proves
+application-data migration preservation, not recovery of the damaged cluster or
+a successful full backup. Temporary CSV exports and runtime logs stay outside Git
+in ignored build output. Production operators still need tested backup/restore.
+
+One intermediate frontend rebuild encountered Windows EBUSY while the temporary
+server used its output directory. After stopping that process, the final build
+and subsequent production HTTP checks passed. Mobile positioning was reviewed
+statically and built; visual interaction remains unverified. The release artifacts
+are ready for container/HTTPS verification on a chosen host, not claimed deployed.

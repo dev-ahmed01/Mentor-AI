@@ -42,3 +42,10 @@ no retry and becomes an explicit unavailable turn. See the
 Embedding/retrieval infrastructure is deferred: direct owner-scoped service reads
 already provide the small relevant context this phase needs. No vector store or
 tool execution is introduced.
+## Final demo boundary
+
+Synthetic demo setup and the release smoke script never invoke a model. AI remains
+disabled by default and production Compose disables it explicitly. The guide
+discloses unavailable AI instead of substituting fabricated success. Controlled
+provider tests verify contracts; no real-model quality or latency claim follows
+from API/build verification. Deterministic planning remains usable independently.

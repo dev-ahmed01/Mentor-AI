@@ -264,3 +264,15 @@ without modifying the old plan, profile or weekly history. Profile edits and
 ordinary generation use the same owner lock. `/pivot` and `/pivot/[id]` expose
 server-rendered comparisons with explicit confirmation through authenticated
 server actions. No AI/provider call participates in this flow.
+## Final demo and release layer (Phase 11)
+
+DemoService composes existing profile, roadmap and weekly-progress services under
+the owner lock; it adds no alternate scoring, adaptation or authentication path.
+V11 retains owner-scoped synthetic provenance. Server-rendered `/demo` and typed
+server actions require explicit confirmations; the app shell always checks for
+the synthetic marker. App error/loading states and native-details navigation
+share the existing styles and auth shell.
+
+Non-root Java/Node images, isolated PostgreSQL Compose and the CI workflow provide
+release packaging. API and database ports are private; an external HTTPS proxy
+serves the frontend. See [deployment configuration and limits](../deployment/DEPLOYMENT.md).

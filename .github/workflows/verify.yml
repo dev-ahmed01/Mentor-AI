@@ -1,0 +1,85 @@
+name: Verify release
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        database: [h2, postgres]
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: mentorai_test
+          POSTGRES_USER: mentorai
+          POSTGRES_PASSWORD: ci-only-isolated-test-password
+        ports: [5432:5432]
+        options: --health-cmd "pg_isready -U mentorai -d mentorai_test" --health-interval 5s --health-timeout 5s --health-retries 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: backend/pom.xml
+      - name: H2 suite and package
+        if: matrix.database == 'h2'
+        working-directory: backend
+        run: sh mvnw -B -Duser.timezone=UTC verify
+      - name: PostgreSQL suite and clean migration
+        if: matrix.database == 'postgres'
+        working-directory: backend
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mentorai_test
+          SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+          SPRING_DATASOURCE_USERNAME: mentorai
+          SPRING_DATASOURCE_PASSWORD: ci-only-isolated-test-password
+        run: sh mvnw -B -Duser.timezone=UTC verify
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm test && npm run lint && npm run build && npm audit --omit=dev --audit-level=high
+        working-directory: frontend
+      - run: node scripts/check-secrets.mjs
+  containers:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_PASSWORD: ci-only-isolated-container-password
+      JWT_SECRET: ci-only-isolated-container-jwt-secret-at-least-32-bytes
+      FRONTEND_ORIGIN: http://127.0.0.1:3000
+      DEMO_ENABLED: 'true'
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Build and start isolated containers
+        run: docker compose -f compose.production.yml up --build --wait --wait-timeout 240
+      - name: Exercise packaged API and pages from the application network
+        run: docker compose -f compose.production.yml exec -T -e API_URL=http://backend:8080 -e FRONTEND_URL=http://frontend:3000 frontend node --input-type=module < scripts/release-smoke.mjs
+      - name: Stop CI containers
+        if: always()
+        run: docker compose -f compose.production.yml down
